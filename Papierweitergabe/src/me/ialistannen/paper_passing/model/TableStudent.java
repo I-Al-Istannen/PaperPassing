@@ -1,11 +1,5 @@
 package me.ialistannen.paper_passing.model;
 
-import java.io.IOException;
-import java.io.InvalidObjectException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.ObjectStreamException;
-
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -19,6 +13,12 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 
+import java.io.IOException;
+import java.io.InvalidObjectException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.ObjectStreamException;
+
 /**
  * A student class, to be displayed in a tableview
  */
@@ -29,18 +29,16 @@ public class TableStudent extends StudentsGridEntry {
 	private StringProperty name;
 
 	/**
-	 * @param name
-	 *            The name of the student
+	 * @param name The name of the student
 	 */
 	public TableStudent(StringProperty name) {
 		this.name = name;
-		
+
 		updateNode();
 	}
 
 	/**
-	 * @param name
-	 *            The name of the student
+	 * @param name The name of the student
 	 */
 	public TableStudent(String name) {
 		this(new SimpleStringProperty(name));
@@ -54,16 +52,14 @@ public class TableStudent extends StudentsGridEntry {
 	}
 
 	/**
-	 * @param name
-	 *            The new name
+	 * @param name The new name
 	 */
 	public void setName(String name) {
 		setName(new SimpleStringProperty(name));
 	}
 
 	/**
-	 * @param name
-	 *            The new name
+	 * @param name The new name
 	 */
 	public void setName(StringProperty name) {
 		if (name.get().trim().isEmpty()) {
@@ -116,28 +112,32 @@ public class TableStudent extends StudentsGridEntry {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
 		TableStudent other = (TableStudent) obj;
 		if (name == null) {
-			if (other.name != null)
+			if (other.name != null) {
 				return false;
-		} else if (!name.get().equals(other.name.get()))
+			}
+		} else if (!name.get().equals(other.name.get())) {
 			return false;
+		}
 		return true;
 	}
 
 	/**
 	 * Serialize this instance.
-	 * 
-	 * @param out
-	 *            Target to which this instance is written.
-	 * @throws IOException
-	 *             Thrown if exception occurs during serialization.
+	 *
+	 * @param out Target to which this instance is written.
+	 *
+	 * @throws IOException Thrown if exception occurs during serialization.
 	 */
 	private void writeObject(final ObjectOutputStream out) throws IOException {
 		out.writeUTF(getName());
@@ -145,13 +145,11 @@ public class TableStudent extends StudentsGridEntry {
 
 	/**
 	 * Deserialize this instance from input stream.
-	 * 
-	 * @param in
-	 *            Input Stream from which this instance is to be deserialized.
-	 * @throws IOException
-	 *             Thrown if error occurs in deserialization.
-	 * @throws ClassNotFoundException
-	 *             Thrown if expected class is not found.
+	 *
+	 * @param in Input Stream from which this instance is to be deserialized.
+	 *
+	 * @throws IOException            Thrown if error occurs in deserialization.
+	 * @throws ClassNotFoundException Thrown if expected class is not found.
 	 */
 	private void readObject(final ObjectInputStream in) throws IOException, ClassNotFoundException {
 		setName(in.readUTF());

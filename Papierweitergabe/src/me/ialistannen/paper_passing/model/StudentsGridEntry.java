@@ -1,11 +1,11 @@
 package me.ialistannen.paper_passing.model;
 
-import java.io.IOException;
-import java.io.Serializable;
-
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.Node;
+
+import java.io.IOException;
+import java.io.Serializable;
 
 /**
  * An entry for the Students grid
@@ -14,7 +14,7 @@ public abstract class StudentsGridEntry implements Serializable {
 
 	private static final long serialVersionUID = 2652242165315109009L;
 
-	protected transient ObjectProperty<Node> nodeProperty;
+	transient ObjectProperty<Node> nodeProperty;
 
 	{
 		nodeProperty = new SimpleObjectProperty<>();

@@ -1,5 +1,10 @@
 package me.ialistannen.paper_passing.logic;
 
+import javafx.geometry.Point2D;
+import me.ialistannen.paper_passing.model.Classroom;
+import me.ialistannen.paper_passing.model.StudentsGridEntry;
+import me.ialistannen.paper_passing.model.TableStudent;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -7,11 +12,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import javafx.geometry.Point2D;
-import me.ialistannen.paper_passing.model.Classroom;
-import me.ialistannen.paper_passing.model.StudentsGridEntry;
-import me.ialistannen.paper_passing.model.TableStudent;
 
 /**
  * Calculates where the next paper should be passed to
@@ -23,10 +23,9 @@ public class PassingCalculator {
 	private List<List<PaperPassingStudent>> splittedList = new ArrayList<>();
 
 	private BinaryTree<String, PaperPassingStudent> resultingTree;
-	
+
 	/**
-	 * @param room
-	 *            The room to use
+	 * @param room The room to use
 	 */
 	public PassingCalculator(Classroom room) {
 		this.room = room;
@@ -34,7 +33,7 @@ public class PassingCalculator {
 		split();
 		resultingTree = createTree();
 	}
-	
+
 	/**
 	 * @return The resulting tree
 	 */
@@ -67,9 +66,9 @@ public class PassingCalculator {
 		Set<PaperPassingStudent> notProcessed = splittedList.stream().filter(list -> list.size() == 1)
 				.flatMap(list -> list.stream()).collect(Collectors.toSet());
 
-		easyList.stream().sequential().flatMap(list -> list.stream()).filter(student -> student.getPaperAmount() < 1)
+		easyList.stream().sequential().flatMap(Collection::stream).filter(student -> student.getPaperAmount() < 1)
 				.forEach(tooFew::add);
-		easyList.stream().sequential().flatMap(list -> list.stream()).filter(student -> student.getPaperAmount() >= 2)
+		easyList.stream().sequential().flatMap(Collection::stream).filter(student -> student.getPaperAmount() >= 2)
 				.forEach(tooMany::add);
 
 		notProcessed.addAll(tooFew);
@@ -103,12 +102,10 @@ public class PassingCalculator {
 			}
 		}
 
-		BinaryTree<String, PaperPassingStudent> tree = new BinaryTree<String, PaperPassingStudent>();
+		BinaryTree<String, PaperPassingStudent> tree = new BinaryTree<>();
 
-		splittedList.stream().flatMap(list -> list.stream())
-				.sorted((o1, o2) -> o1.getBacking().getName().compareTo(o2.getBacking().getName())).forEach(st -> {
-					tree.add(st.getBacking().getName(), st.getTarget());
-				});
+		splittedList.stream().flatMap(Collection::stream)
+				.sorted((o1, o2) -> o1.getBacking().getName().compareTo(o2.getBacking().getName())).forEach(st -> tree.add(st.getBacking().getName(), st.getTarget()));
 
 //		String levelOrder = tree.toStringLevelOrder();
 //		BinaryTree<String, PaperPassingStudent> newTree = new DSW<>(tree).balance();
@@ -119,16 +116,14 @@ public class PassingCalculator {
 	}
 
 	/**
-	 * @param student
-	 *            The student to search a partner for
-	 * @param list
-	 *            The list with students
-	 * @param desiredPaperAmount
-	 *            The paper amount the partners should have
+	 * @param student            The student to search a partner for
+	 * @param list               The list with students
+	 * @param desiredPaperAmount The paper amount the partners should have
+	 *
 	 * @return The students if one was found
 	 */
 	private Optional<PaperPassingStudent> findNearestFittingNode(PaperPassingStudent student,
-			Collection<PaperPassingStudent> list, int desiredPaperAmount) {
+	                                                             Collection<PaperPassingStudent> list, int desiredPaperAmount) {
 		double minDistance = Double.MAX_VALUE;
 		PaperPassingStudent foundStudent = null;
 		for (PaperPassingStudent paperPassingStudent : list) {
@@ -153,22 +148,21 @@ public class PassingCalculator {
 
 		List<List<PaperPassingStudent>> horizontal = getHorizontal(new HashSet<>(), data).stream()
 				.filter(list -> list.size() > 1).collect(Collectors.toList());
-		List<List<PaperPassingStudent>> vertical = getVertical(horizontal.stream().flatMap(list -> list.stream())
-				.map(PaperPassingStudent::getBacking).collect(Collectors.toCollection(() -> new HashSet<>())), data);
+		List<List<PaperPassingStudent>> vertical = getVertical(horizontal.stream().flatMap(Collection::stream)
+				.map(PaperPassingStudent::getBacking).collect(Collectors.toCollection(HashSet::new)), data);
 
 		splittedList.addAll(vertical);
 		splittedList.addAll(horizontal);
 	}
 
 	/**
-	 * @param visited
-	 *            The visited list
-	 * @param data
-	 *            The data to use
+	 * @param visited The visited list
+	 * @param data    The data to use
+	 *
 	 * @return The horizontal connected lines
 	 */
 	private List<List<PaperPassingStudent>> getHorizontal(Collection<PaperPassingStudent> visited,
-			StudentsGridEntry[][] data) {
+	                                                      StudentsGridEntry[][] data) {
 		List<List<PaperPassingStudent>> horizontal = new ArrayList<>();
 
 		List<PaperPassingStudent> tmpList = new ArrayList<>();
@@ -199,10 +193,9 @@ public class PassingCalculator {
 	}
 
 	/**
-	 * @param visited
-	 *            The visited list
-	 * @param data
-	 *            The data to use
+	 * @param visited The visited list
+	 * @param data    The data to use
+	 *
 	 * @return The vertical connected lines
 	 */
 	private List<List<PaperPassingStudent>> getVertical(Collection<TableStudent> visited, StudentsGridEntry[][] data) {

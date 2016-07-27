@@ -1,8 +1,5 @@
 package me.ialistannen.paper_passing.model;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-
 import javafx.beans.property.ObjectProperty;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
@@ -11,6 +8,9 @@ import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
 import javafx.scene.paint.Color;
+
+import java.io.IOException;
+import java.io.ObjectInputStream;
 
 /**
  * Where a desk is present, but no student
@@ -30,7 +30,7 @@ public class DeskPlaceholder extends StudentsGridEntry {
 	public ObjectProperty<Node> nodeProperty() {
 		return nodeProperty;
 	}
-	
+
 	private void init() {
 		Label label = new Label("");
 		label.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);

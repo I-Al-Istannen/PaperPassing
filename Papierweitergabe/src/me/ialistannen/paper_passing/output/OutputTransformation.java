@@ -1,9 +1,9 @@
 package me.ialistannen.paper_passing.output;
 
-import java.util.function.Function;
-
 import me.ialistannen.paper_passing.logic.BinaryTree;
 import me.ialistannen.paper_passing.logic.PaperPassingStudent;
+
+import java.util.function.Function;
 
 /**
  * Changes the output tree to a different way of passing
@@ -27,17 +27,16 @@ public enum OutputTransformation {
 	private Function<BinaryTree<String, PaperPassingStudent>, BinaryTree<String, PaperPassingStudent>> function;
 
 	/**
-	 * @param function
-	 *            The function to use
+	 * @param function The function to use
 	 */
-	private OutputTransformation(
+	OutputTransformation(
 			Function<BinaryTree<String, PaperPassingStudent>, BinaryTree<String, PaperPassingStudent>> function) {
 		this.function = function;
 	}
 
 	/**
-	 * @param data
-	 *            The data to use
+	 * @param data The data to use
+	 *
 	 * @return The data after the transformation
 	 */
 	public BinaryTree<String, PaperPassingStudent> applyFunction(BinaryTree<String, PaperPassingStudent> data) {

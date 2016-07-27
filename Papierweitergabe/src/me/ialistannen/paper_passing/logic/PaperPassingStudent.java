@@ -12,9 +12,9 @@ public class PaperPassingStudent {
 	private TableStudent backing;
 	private PaperPassingStudent target;
 	private Point2D location;
-	
+
 	/**
-	 * @param backing The {@link TableStudent} backing this
+	 * @param backing  The {@link TableStudent} backing this
 	 * @param location The location in the grid
 	 */
 	public PaperPassingStudent(TableStudent backing, Point2D location) {
@@ -28,14 +28,14 @@ public class PaperPassingStudent {
 	public int getPaperAmount() {
 		return paperAmount;
 	}
-	
+
 	/**
 	 * @param paperAmount The paper amount of the student
 	 */
 	public void setPaperAmount(int paperAmount) {
 		this.paperAmount = paperAmount;
 	}
-	
+
 	/**
 	 * Reduces the paper amount by one
 	 */
@@ -56,28 +56,28 @@ public class PaperPassingStudent {
 	public TableStudent getBacking() {
 		return backing;
 	}
-	
+
 	/**
 	 * @return The target or null
 	 */
 	public PaperPassingStudent getTarget() {
 		return target;
 	}
-	
+
 	/**
 	 * @return The Location of this student
 	 */
 	public Point2D getLocation() {
 		return location;
 	}
-	
+
 	/**
 	 * @param target The new target
 	 */
 	public void setTarget(PaperPassingStudent target) {
 		this.target = target;
 	}
-	
+
 	@Override
 	public String toString() {
 		return "PaperPassingStudent [paperAmount=" + paperAmount + ", backing=" + backing.getName() + ", target=" + target.getBacking().getName()
@@ -94,18 +94,23 @@ public class PaperPassingStudent {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
 		PaperPassingStudent other = (PaperPassingStudent) obj;
 		if (backing == null) {
-			if (other.backing != null)
+			if (other.backing != null) {
 				return false;
-		} else if (!backing.equals(other.backing))
+			}
+		} else if (!backing.equals(other.backing)) {
 			return false;
+		}
 		return true;
 	}
 }

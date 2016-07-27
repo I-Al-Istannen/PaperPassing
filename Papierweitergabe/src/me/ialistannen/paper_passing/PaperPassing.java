@@ -1,8 +1,5 @@
 package me.ialistannen.paper_passing;
 
-import java.nio.file.Files;
-import java.nio.file.Paths;
-
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -17,6 +14,9 @@ import me.ialistannen.paper_passing.output.OutputFormatter;
 import me.ialistannen.paper_passing.output.OutputTransformation;
 import me.ialistannen.paper_passing.view.MainWindowController;
 
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
 /**
  * The main class
  */
@@ -26,20 +26,21 @@ public class PaperPassing extends Application {
 
 	private Stage primaryStage;
 	private MainWindowController mainWindowController;
-	
+
 	{
 		instance = this;
 	}
-	
+
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 		this.primaryStage = primaryStage;
-		
+
 		Classroom room = null;
-		if(Files.exists(Paths.get("bin/save2.save"))) {
+		Files.list(Paths.get("bin").toAbsolutePath()).forEach(System.out::println);
+		if (Files.exists(Paths.get("bin/save2.save"))) {
 			room = Classroom.read(Paths.get("bin/save2.save")).get(0);
 		}
-		
+
 //		for(int y = 0; y < room.getDataList().size(); y++) {
 //			room.getData()[y][1] = new DeskPlaceholder();
 //		}
@@ -50,11 +51,11 @@ public class PaperPassing extends Application {
 		System.out.println("+ =========== +");
 		System.out.println();
 		OutputFormatter.output(OutputFormatter.formatList(OutputTransformation.LEFT.applyFunction(tree)));
-		
+
 		FXMLLoader loader = new FXMLLoader(MainWindowController.class.getResource("MainWindow.fxml"));
 		BorderPane pane = loader.load();
 		mainWindowController = loader.getController();
-		
+
 		primaryStage.setScene(new Scene(pane));
 
 		primaryStage.show();
@@ -65,10 +66,10 @@ public class PaperPassing extends Application {
 	private void teste() {
 
 		Classroom room = null;
-		if(Files.exists(Paths.get("bin/save2.save"))) {
+		if (Files.exists(Paths.get("bin/save2.save"))) {
 			room = Classroom.read(Paths.get("bin/save2.save")).get(0);
 		}
-		
+
 //		StudentsGridEntry[][] contents = new StudentsGridEntry[10][10];
 //
 //		for (int x = 0; x < 10; x++) {
@@ -119,7 +120,7 @@ public class PaperPassing extends Application {
 		final Classroom finalRoom = room;
 
 		getMainWindowController().getTableGrid().setData(finalRoom);
-		
+
 		new Thread(() -> {
 			System.out.println(Thread.currentThread().getName());
 
@@ -128,7 +129,7 @@ public class PaperPassing extends Application {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			
+
 			((TableStudent) getMainWindowController().getTableGrid().getEntry(0, 3).get()).setName("30 : 0");
 
 			try {
@@ -137,14 +138,14 @@ public class PaperPassing extends Application {
 				e.printStackTrace();
 			}
 			getMainWindowController().getTableGrid().setEntry(9, 10, new TableStudent("Your wish!!"));
-			
+
 			try {
 				Thread.sleep(1000);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 			getMainWindowController().getTableGrid().setEntry(9, 11, new TableStudent("Your wish!!!"));
-			
+
 //			getMainWindowController().getTableGrid().setData(finalRoom);			
 		}, "Switcher");
 	}
@@ -162,7 +163,7 @@ public class PaperPassing extends Application {
 	public MainWindowController getMainWindowController() {
 		return mainWindowController;
 	}
-	
+
 	/**
 	 * @return THe instance of the application
 	 */
@@ -171,8 +172,7 @@ public class PaperPassing extends Application {
 	}
 
 	/**
-	 * @param args
-	 *            The args passed to the program
+	 * @param args The args passed to the program
 	 */
 	public static void main(String[] args) {
 		launch(args);

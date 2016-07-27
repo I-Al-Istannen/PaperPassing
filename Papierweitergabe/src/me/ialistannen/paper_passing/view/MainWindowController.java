@@ -1,27 +1,27 @@
 package me.ialistannen.paper_passing.view;
 
-import java.io.IOException;
-
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.layout.BorderPane;
 
+import java.io.IOException;
+
 /**
  * The controller for the main window
  */
 public class MainWindowController {
-	
-    @FXML
-    private BorderPane borderPane;
-	
-    private TableGridController tableGrid;
-    
+
 	@FXML
-	private void initialize() {	
+	private BorderPane borderPane;
+
+	private TableGridController tableGrid;
+
+	@FXML
+	private void initialize() {
 		loadTableGrid();
 	}
-	
+
 	/**
 	 * Loads the table grid
 	 */
@@ -30,13 +30,13 @@ public class MainWindowController {
 			FXMLLoader loader = new FXMLLoader(TableGridController.class.getResource("TableGrid.fxml"));
 			Parent pane = loader.load();
 			tableGrid = loader.getController();
-						
+
 			borderPane.setCenter(pane);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**
 	 * @return The table grid controller
 	 */

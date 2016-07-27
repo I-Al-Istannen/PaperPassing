@@ -3,19 +3,16 @@ package me.ialistannen.paper_passing.logic;
 /**
  * An implementation of the "Day-Stout-Warren" algorithm to balance a tree.
  * <br>Heavily borrowed from WikiPedia, but I think I understood the way it works :P
- * 
- * @param <T>
- *            The key of the tree
- * @param <V>
- *            The value of the key
+ *
+ * @param <T> The key of the tree
+ * @param <V> The value of the key
  */
-public class DSW<T extends Comparable<T>, V> {
+public class DSW <T extends Comparable<T>, V> {
 
 	private BinaryTree<T, V> root;
 
 	/**
-	 * @param root
-	 *            The tree root node
+	 * @param root The tree root node
 	 */
 	public DSW(BinaryTree<T, V> root) {
 		this.root = root;
@@ -23,7 +20,7 @@ public class DSW<T extends Comparable<T>, V> {
 
 	/**
 	 * Balances the tree.
-	 * 
+	 *
 	 * @return The new root. Use it.
 	 */
 	public BinaryTree<T, V> balance() {
@@ -48,14 +45,13 @@ public class DSW<T extends Comparable<T>, V> {
 
 	/**
 	 * Makes it effectively a linked list.
-	 * 
+	 * <p>
 	 * Puts the current node as the right child of the left one. Then moves the
 	 * left child's right child between the currents right and the current. Then
 	 * repeats this, with the left node as the current. Then, when there are no
 	 * more left nodes, traverses further in the list.
-	 * 
-	 * @param root
-	 *            The pseudo root
+	 *
+	 * @param root The pseudo root
 	 */
 	private void treeToVine(BinaryTree<T, V> root) {
 		BinaryTree<T, V> tail = root;
@@ -99,8 +95,8 @@ public class DSW<T extends Comparable<T>, V> {
 	}
 
 	/**
-	 * @param size
-	 *            The size of the tree
+	 * @param size The size of the tree
+	 *
 	 * @return M.
 	 */
 	private int getM(int size) {
