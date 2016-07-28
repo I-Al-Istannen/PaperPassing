@@ -52,6 +52,7 @@ public class TableGridController {
 	private ObservableList<StudentsGridEntry[]> data = FXCollections.observableArrayList();
 
 	@FXML
+	@SuppressWarnings("unused")
 	private void initialize() {
 		createColumns(0);
 
@@ -73,6 +74,12 @@ public class TableGridController {
 						- tableView.getPadding().getTop() - tableView.getPadding().getBottom()));
 	}
 
+	/**
+	 * Resizes the components
+	 *
+	 * @param width  The width
+	 * @param height The height
+	 */
 	private void resizeComponents(double width, double height) {
 		if (data.isEmpty()) {
 			return;
@@ -87,35 +94,38 @@ public class TableGridController {
 		height -= rows * 8;
 
 		double squareWidth = width / (columns);
-		double squareheight = height / (rows);
+		double squareHeight = height / (rows);
 
 		for (TableColumn<StudentsGridEntry[], ?> tableColumn : tableView.getColumns()) {
 			tableColumn.setPrefWidth(squareWidth);
 			for (int y = 0; y < data.size(); y++) {
-				if (tableColumn == null || tableColumn.getCellData(y) == null) {
+				if (tableColumn.getCellData(y) == null) {
 					continue;
 				}
 				Node data = (Node) tableColumn.getCellData(y);
 				if (data instanceof Region) {
-					((Region) data).setPrefHeight(squareheight);
+					((Region) data).setPrefHeight(squareHeight);
 					tableView.refresh();
 				}
 			}
 		}
 	}
 
-	private void createColumns(int width) {
+	/**
+	 * Creates the desired amount of columns
+	 *
+	 * @param amount The amount of columns
+	 */
+	private void createColumns(int amount) {
 		tableView.getColumns().clear();
-		if (width < 0) {
+		if (amount < 0) {
 			throw new IllegalArgumentException("Width must be positive!");
 		}
 
-		for (int i = 0; i < width; i++) {
+		for (int i = 0; i < amount; i++) {
 			TableColumn<StudentsGridEntry[], Node> column = new TableColumn<>(Integer.toString(i));
 			final int colNumber = i;
-			column.setCellValueFactory(param -> {
-				return param.getValue()[colNumber] != null ? param.getValue()[colNumber].nodeProperty() : new SimpleObjectProperty<>();
-			});
+			column.setCellValueFactory(param -> param.getValue()[colNumber] != null ? param.getValue()[colNumber].nodeProperty() : new SimpleObjectProperty<>());
 			column.setSortable(false);
 
 			tableView.getColumns().add(column);
@@ -166,9 +176,7 @@ public class TableGridController {
 			deleteGraphic.minWidthProperty().bind(studentGraphic.widthProperty());
 
 			MenuItem studentItem = new MenuItem("Student", studentGraphic);
-			studentItem.setOnAction(action -> {
-				getTableStudentFromUser().ifPresent(this::replaceSelectedEntry);
-			});
+			studentItem.setOnAction(action -> getTableStudentFromUser().ifPresent(this::replaceSelectedEntry));
 
 			MenuItem deskItem = new MenuItem("Desk", deskGraphic);
 			deskItem.setOnAction(action -> replaceSelectedEntry(new DeskPlaceholder()));
@@ -211,6 +219,11 @@ public class TableGridController {
 		return Optional.of(student);
 	}
 
+	/**
+	 * Replaces the selected entry with the passed one
+	 *
+	 * @param newEntry The new entry, to replace the currently selected one
+	 */
 	private void replaceSelectedEntry(StudentsGridEntry newEntry) {
 		int column = tableView.getSelectionModel().getSelectedCells().get(0).getColumn();
 		int row = tableView.getSelectionModel().getSelectedCells().get(0).getRow();
@@ -311,6 +324,9 @@ public class TableGridController {
 		refresh();
 	}
 
+	/**
+	 * Refreshes the current grid, to make changes in data appear correctly.
+	 */
 	private void refresh() {
 		if (!Platform.isFxApplicationThread()) {
 			runOnFxThreadAndWait(() -> refresh());

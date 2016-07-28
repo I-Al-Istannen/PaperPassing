@@ -64,7 +64,7 @@ public class PassingCalculator {
 		}
 
 		Set<PaperPassingStudent> notProcessed = splittedList.stream().filter(list -> list.size() == 1)
-				.flatMap(list -> list.stream()).collect(Collectors.toSet());
+				.flatMap(Collection::stream).collect(Collectors.toSet());
 
 		easyList.stream().sequential().flatMap(Collection::stream).filter(student -> student.getPaperAmount() < 1)
 				.forEach(tooFew::add);
@@ -146,7 +146,7 @@ public class PassingCalculator {
 	private void split() {
 		StudentsGridEntry[][] data = room.getData();
 
-		List<List<PaperPassingStudent>> horizontal = getHorizontal(new HashSet<>(), data).stream()
+		List<List<PaperPassingStudent>> horizontal = getHorizontal(data).stream()
 				.filter(list -> list.size() > 1).collect(Collectors.toList());
 		List<List<PaperPassingStudent>> vertical = getVertical(horizontal.stream().flatMap(Collection::stream)
 				.map(PaperPassingStudent::getBacking).collect(Collectors.toCollection(HashSet::new)), data);
@@ -156,22 +156,17 @@ public class PassingCalculator {
 	}
 
 	/**
-	 * @param visited The visited list
-	 * @param data    The data to use
+	 * @param data The data to use
 	 *
 	 * @return The horizontal connected lines
 	 */
-	private List<List<PaperPassingStudent>> getHorizontal(Collection<PaperPassingStudent> visited,
-	                                                      StudentsGridEntry[][] data) {
+	private List<List<PaperPassingStudent>> getHorizontal(StudentsGridEntry[][] data) {
 		List<List<PaperPassingStudent>> horizontal = new ArrayList<>();
 
 		List<PaperPassingStudent> tmpList = new ArrayList<>();
 		for (int y = 0; y < data.length; y++) {
 			for (int x = 0; x < data[y].length; x++) {
 				StudentsGridEntry entry = data[y][x];
-				if (visited.contains(entry)) {
-					continue;
-				}
 				if (!(entry instanceof TableStudent)) {
 					if (tmpList.size() > 1) {
 						horizontal.add(tmpList);
@@ -180,7 +175,6 @@ public class PassingCalculator {
 					continue;
 				}
 				PaperPassingStudent student = new PaperPassingStudent((TableStudent) entry, new Point2D(x, y));
-				visited.add(student);
 				tmpList.add(student);
 			}
 			if (tmpList.size() > 1) {
@@ -205,7 +199,7 @@ public class PassingCalculator {
 		for (int x = 0; x < data[0].length; x++) {
 			for (int y = 0; y < data.length; y++) {
 				StudentsGridEntry entry = data[y][x];
-				if (visited.contains(entry)) {
+				if (entry instanceof TableStudent && visited.contains(entry)) {
 					continue;
 				}
 				if (!(entry instanceof TableStudent)) {

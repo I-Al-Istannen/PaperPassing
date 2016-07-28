@@ -6,6 +6,7 @@ import me.ialistannen.paper_passing.model.TableStudent;
 /**
  * A student passing a paper
  */
+@SuppressWarnings("WeakerAccess")
 public class PaperPassingStudent {
 
 	private int paperAmount = 1;

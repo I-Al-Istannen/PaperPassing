@@ -26,7 +26,8 @@ public class BinaryTree <K extends Comparable<K>, V> {
 	 * @param key   The key
 	 * @param value The value
 	 */
-	public BinaryTree(K key, V value) {
+	BinaryTree(K key, V value) {
+		this();
 		this.key = key;
 		this.value = value;
 	}
@@ -34,28 +35,28 @@ public class BinaryTree <K extends Comparable<K>, V> {
 	/**
 	 * @return The right child
 	 */
-	public BinaryTree<K, V> getRight() {
+	BinaryTree<K, V> getRight() {
 		return right;
 	}
 
 	/**
 	 * @param right The right child
 	 */
-	protected void setRight(BinaryTree<K, V> right) {
+	void setRight(BinaryTree<K, V> right) {
 		this.right = right;
 	}
 
 	/**
 	 * @return The left child
 	 */
-	public BinaryTree<K, V> getLeft() {
+	BinaryTree<K, V> getLeft() {
 		return left;
 	}
 
 	/**
 	 * @param left The keft child
 	 */
-	protected void setLeft(BinaryTree<K, V> left) {
+	void setLeft(BinaryTree<K, V> left) {
 		this.left = left;
 	}
 
@@ -106,7 +107,7 @@ public class BinaryTree <K extends Comparable<K>, V> {
 	 * @param value The value to add
 	 */
 	public void add(K key, V value) {
-		if (this.key == null && this.value == null) {
+		if (this.key == null || this.value == null) {
 			this.key = key;
 			this.value = value;
 			return;
