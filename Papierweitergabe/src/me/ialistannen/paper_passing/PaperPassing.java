@@ -2,19 +2,26 @@ package me.ialistannen.paper_passing;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Point2D;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
-import me.ialistannen.paper_passing.logic.BinaryTree;
+import me.ialistannen.paper_passing.logic.CurrentStudents;
 import me.ialistannen.paper_passing.logic.PaperPassingStudent;
 import me.ialistannen.paper_passing.logic.PassingCalculator;
 import me.ialistannen.paper_passing.model.Classroom;
+import me.ialistannen.paper_passing.model.TableStudent;
 import me.ialistannen.paper_passing.output.OutputFormatter;
 import me.ialistannen.paper_passing.output.OutputTransformation;
+import me.ialistannen.paper_passing.util.Util;
+import me.ialistannen.paper_passing.view.ApplyTransformationsWindowController;
 import me.ialistannen.paper_passing.view.MainWindowController;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * The main class
@@ -35,18 +42,50 @@ public class PaperPassing extends Application {
 		this.primaryStage = primaryStage;
 
 		Classroom room = null;
-		Files.list(Paths.get("bin").toAbsolutePath()).forEach(System.out::println);
 		if (Files.exists(Paths.get("bin/save2.save"))) {
 			room = Classroom.read(Paths.get("bin/save2.save")).get(0);
 		}
 
-		Classroom.save(Paths.get("bin/save2.save"), room);
-		BinaryTree<String, PaperPassingStudent> tree = new PassingCalculator(room).getResultingTree();
-		OutputFormatter.output(OutputFormatter.formatList(tree));
-		System.out.println();
-		System.out.println("+ =========== +");
-		System.out.println();
-		OutputFormatter.output(OutputFormatter.formatList(OutputTransformation.LEFT.applyFunction(tree)));
+		List<PaperPassingStudent> resultingList = new PassingCalculator(room).getResultingList();
+		resultingList = Util.getOrderedList(resultingList.get(0));
+
+		OutputFormatter.output(OutputFormatter.formatList(resultingList));
+
+		{
+			List<PaperPassingStudent> student = new ArrayList<>();
+			PaperPassingStudent ts = new PaperPassingStudent(new TableStudent("Simone"), new Point2D(1, 1));
+			PaperPassingStudent ts2 = new PaperPassingStudent(new TableStudent("Linda"), new Point2D(1, 1));
+			PaperPassingStudent ts3 = new PaperPassingStudent(new TableStudent("Leonora"), new Point2D(1, 1));
+			PaperPassingStudent ts4 = new PaperPassingStudent(new TableStudent("Tester"), new Point2D(1, 1));
+
+			ts.setTarget(ts2);
+			ts2.setTarget(ts3);
+			ts3.setTarget(ts4);
+			ts4.setTarget(ts);
+			student.add(ts);
+			student.add(ts2);
+			student.add(ts3);
+			student.add(ts4);
+
+			// TODO: FIX THE TRANSFORMATIONS *aaargh*
+
+			student = OutputTransformation.LEFT.applyFunction(student);
+			student = OutputTransformation.LEFT.applyFunction(student);
+			student = OutputTransformation.LEFT.applyFunction(student);
+			student = Util.getOrderedList(student.get(0));
+			System.out.println(student.stream().map(paperPassingStudent -> paperPassingStudent.getBacking().getName()).collect(Collectors.toList()));
+
+			CurrentStudents.getInstance().setOriginal(student);
+			FXMLLoader loader = new FXMLLoader(ApplyTransformationsWindowController.class.getResource("ApplyTransformationsWindow.fxml"));
+			BorderPane pane = loader.load();
+			ApplyTransformationsWindowController controller = loader.getController();
+			Scene scene = new Scene(pane);
+			primaryStage.setScene(scene);
+			primaryStage.show();
+			if ("".isEmpty()) {
+				return;
+			}
+		}
 
 		FXMLLoader loader = new FXMLLoader(MainWindowController.class.getResource("MainWindow.fxml"));
 		BorderPane pane = loader.load();

@@ -1,8 +1,9 @@
 package me.ialistannen.paper_passing.output;
 
-import me.ialistannen.paper_passing.logic.BinaryTree;
+import com.sun.istack.internal.NotNull;
 import me.ialistannen.paper_passing.logic.PaperPassingStudent;
 
+import java.util.List;
 import java.util.function.Function;
 
 /**
@@ -11,26 +12,50 @@ import java.util.function.Function;
 public enum OutputTransformation {
 
 	/**
-	 * Passes the papers the other way round
+	 * Passes the papers one to the right
+	 */
+	RIGHT(data -> {
+		for (PaperPassingStudent student : data) {
+			int targetIndex = data.indexOf(student.getTarget());
+			if (targetIndex == data.size() - 1) {
+				student.setTarget(data.get(0));
+			} else {
+				student.setTarget(data.get(targetIndex + 1));
+			}
+		}
+
+		return data;
+	}),
+	/**
+	 * Passes the papers one to the left
 	 */
 	LEFT(data -> {
-		BinaryTree<String, PaperPassingStudent> tree = new BinaryTree<>();
-		for (BinaryTree<String, PaperPassingStudent> entry : data.getChildren()) {
-			System.out.println(entry.getKey() + " " + entry.getValue().getBacking().getName());
-			System.out.println(data.find(entry.getKey()).get().getValue());
-			tree.add(entry.getKey(), entry.getValue());
+		if (data.isEmpty()) {
+			return data;
 		}
-		System.out.println();
-		return tree;
+
+		// if the people pass it to themselves, skip it.
+		do {
+			for (PaperPassingStudent student : data) {
+				int targetIndex = data.indexOf(student.getTarget()) - 1;
+				if (targetIndex < 0) {
+					targetIndex = data.size() - 1;
+				}
+
+				student.setTarget(data.get(targetIndex));
+			}
+		} while (data.get(0).equals(data.get(0).getTarget()));
+
+		// don't oder that list. It destroys the indices
+		return data;
 	});
 
-	private Function<BinaryTree<String, PaperPassingStudent>, BinaryTree<String, PaperPassingStudent>> function;
+	private Function<List<PaperPassingStudent>, List<PaperPassingStudent>> function;
 
 	/**
 	 * @param function The function to use
 	 */
-	OutputTransformation(
-			Function<BinaryTree<String, PaperPassingStudent>, BinaryTree<String, PaperPassingStudent>> function) {
+	OutputTransformation(Function<List<PaperPassingStudent>, List<PaperPassingStudent>> function) {
 		this.function = function;
 	}
 
@@ -39,7 +64,7 @@ public enum OutputTransformation {
 	 *
 	 * @return The data after the transformation
 	 */
-	public BinaryTree<String, PaperPassingStudent> applyFunction(BinaryTree<String, PaperPassingStudent> data) {
+	public List<PaperPassingStudent> applyFunction(@NotNull List<PaperPassingStudent> data) {
 		return function.apply(data);
 	}
 }

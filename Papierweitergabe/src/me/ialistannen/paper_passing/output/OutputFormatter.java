@@ -1,6 +1,5 @@
 package me.ialistannen.paper_passing.output;
 
-import me.ialistannen.paper_passing.logic.BinaryTree;
 import me.ialistannen.paper_passing.logic.PaperPassingStudent;
 
 import java.util.ArrayList;
@@ -13,19 +12,19 @@ import java.util.stream.Collectors;
 public class OutputFormatter {
 
 	/**
-	 * @param tree The tree to format
+	 * @param passingStudentList The passingStudentList to format
 	 *
 	 * @return The Output formatted as a list
 	 */
-	public static List<String> formatList(BinaryTree<String, PaperPassingStudent> tree) {
+	public static List<String> formatList(List<PaperPassingStudent> passingStudentList) {
 		List<String> list = new ArrayList<>();
 		int maxSize = 0;
-		for (BinaryTree<String, PaperPassingStudent> binaryTree : tree.getInOrderChildren()) {
-			if (binaryTree.getKey().length() > maxSize) {
-				maxSize = binaryTree.getKey().length();
+		for (PaperPassingStudent student : passingStudentList) {
+			if (student.getBacking().getName().length() > maxSize) {
+				maxSize = student.getBacking().getName().length();
 			}
 
-			list.add(binaryTree.getKey() + "|| -> ||" + binaryTree.getValue().getBacking().getName());
+			list.add(student.getBacking().getName() + "|| -> ||" + student.getTarget().getBacking().getName());
 		}
 
 		final int finalSize = maxSize;
@@ -47,21 +46,19 @@ public class OutputFormatter {
 
 	/**
 	 * @param leftHand        The left side
-	 * @param seperator       The seperator
+	 * @param separator       The separator
 	 * @param rightHand       The right side
 	 * @param maxLeftHandSize The max size of the left side
 	 *
 	 * @return The adjusted string
 	 */
-	private static String matchWhitespaces(String leftHand, String seperator, String rightHand, int maxLeftHandSize) {
+	private static String matchWhitespaces(String leftHand, String separator, String rightHand, int maxLeftHandSize) {
 		int difference = maxLeftHandSize - leftHand.length();
-		StringBuilder builder = new StringBuilder();
-		builder.append(leftHand);
-		builder.append(repeat(" ", difference));
-		builder.append(seperator);
-		builder.append(rightHand);
 
-		return builder.toString();
+		return leftHand +
+				repeat(" ", difference) +
+				separator +
+				rightHand;
 	}
 
 	/**

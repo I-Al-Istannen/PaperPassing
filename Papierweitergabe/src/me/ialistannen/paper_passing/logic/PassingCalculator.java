@@ -4,9 +4,11 @@ import javafx.geometry.Point2D;
 import me.ialistannen.paper_passing.model.Classroom;
 import me.ialistannen.paper_passing.model.StudentsGridEntry;
 import me.ialistannen.paper_passing.model.TableStudent;
+import me.ialistannen.paper_passing.util.Util;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -20,9 +22,9 @@ public class PassingCalculator {
 
 	private Classroom room;
 
-	private List<List<PaperPassingStudent>> splittedList = new ArrayList<>();
+	private List<List<PaperPassingStudent>> splitList = new ArrayList<>();
 
-	private BinaryTree<String, PaperPassingStudent> resultingTree;
+	private List<PaperPassingStudent> resultingList;
 
 	/**
 	 * @param room The room to use
@@ -31,18 +33,23 @@ public class PassingCalculator {
 		this.room = room;
 
 		split();
-		resultingTree = createTree();
+		resultingList = createRightList();
 	}
 
 	/**
-	 * @return The resulting tree
+	 * @return The resulting List
 	 */
-	public BinaryTree<String, PaperPassingStudent> getResultingTree() {
-		return resultingTree;
+	public List<PaperPassingStudent> getResultingList() {
+		return resultingList;
 	}
 
-	private BinaryTree<String, PaperPassingStudent> createTree() {
-		List<List<PaperPassingStudent>> easyList = splittedList.stream().filter(list -> list.size() > 1)
+	/**
+	 * Creates the list, if all students passed it one to the right
+	 *
+	 * @return A List with all the students in order
+	 */
+	private List<PaperPassingStudent> createRightList() {
+		List<List<PaperPassingStudent>> easyList = splitList.stream().filter(list -> list.size() > 1)
 				.collect(Collectors.toList());
 
 		Set<PaperPassingStudent> tooFew = new HashSet<>(), tooMany = new HashSet<>();
@@ -63,7 +70,7 @@ public class PassingCalculator {
 			}
 		}
 
-		Set<PaperPassingStudent> notProcessed = splittedList.stream().filter(list -> list.size() == 1)
+		Set<PaperPassingStudent> notProcessed = splitList.stream().filter(list -> list.size() == 1)
 				.flatMap(Collection::stream).collect(Collectors.toSet());
 
 		easyList.stream().sequential().flatMap(Collection::stream).filter(student -> student.getPaperAmount() < 1)
@@ -75,6 +82,7 @@ public class PassingCalculator {
 		notProcessed.addAll(tooMany);
 
 		Set<PaperPassingStudent> copy = new HashSet<>(notProcessed);
+		// create the passing circles. May be more than one. Just sets the targets
 		for (PaperPassingStudent student : notProcessed) {
 
 			if (!copy.contains(student)) {
@@ -102,17 +110,32 @@ public class PassingCalculator {
 			}
 		}
 
-		BinaryTree<String, PaperPassingStudent> tree = new BinaryTree<>();
+		List<List<PaperPassingStudent>> circles = getCircles(splitList.stream().flatMap(Collection::stream).collect(Collectors.toList()));
+		// connect them!
+		for (int i = 0; i < circles.size(); i++) {
+			List<PaperPassingStudent> firstList = circles.get(i);
+			// has more elements
+			if (circles.size() > i + 1 && !firstList.isEmpty()) {
+				List<PaperPassingStudent> secondList = circles.get(i + 1);
+				if (secondList.isEmpty()) {
+					continue;
+				}
+				PaperPassingStudent firstFromFirst = firstList.get(0);
+				PaperPassingStudent lastFromFirst = firstList.get(firstList.size() - 1);
+				PaperPassingStudent firstFromSecond = secondList.get(0);
+				PaperPassingStudent lastFromSecond = secondList.get(secondList.size() - 1);
 
-		splittedList.stream().flatMap(Collection::stream)
-				.sorted((o1, o2) -> o1.getBacking().getName().compareTo(o2.getBacking().getName())).forEach(st -> tree.add(st.getBacking().getName(), st.getTarget()));
+				lastFromFirst.setTarget(firstFromSecond);
+				lastFromSecond.setTarget(firstFromFirst);
+			}
+		}
 
-//		String levelOrder = tree.toStringLevelOrder();
-//		BinaryTree<String, PaperPassingStudent> newTree = new DSW<>(tree).balance();
-//		String seconf = newTree.toStringLevelOrder();
-//		System.out.println(levelOrder.replaceAll(",V=.+?\\]", "").replace("[T='", "").replace("']']", ""));
-//		System.out.println(seconf.replaceAll(",V=.+?\\]", "").replace("[T='", "").replace("']']", ""));
-		return tree;
+
+		if (splitList.isEmpty() || splitList.get(0).isEmpty()) {
+			return Collections.emptyList();
+		}
+		// create the ordered List. Cosmetics :P
+		return Util.getOrderedList(splitList.get(0).get(0));
 	}
 
 	/**
@@ -140,6 +163,25 @@ public class PassingCalculator {
 		return Optional.ofNullable(foundStudent);
 	}
 
+	private List<List<PaperPassingStudent>> getCircles(List<PaperPassingStudent> input) {
+		List<List<PaperPassingStudent>> lists = new ArrayList<>();
+		List<PaperPassingStudent> tmp = new ArrayList<>();
+		for (int i = 0; i < input.size(); i++) {
+			PaperPassingStudent paperPassingStudent = input.get(i);
+			while (!tmp.contains(paperPassingStudent)) {
+				tmp.add(paperPassingStudent);
+				paperPassingStudent = paperPassingStudent.getTarget();
+			}
+			input.removeAll(tmp);
+			i = -1;
+			lists.add(tmp);
+			// reassign to not clear the original list (pass by reference)
+			tmp = new ArrayList<>();
+		}
+
+		return lists;
+	}
+
 	/**
 	 * Splits the table in connected lines (and "dots")
 	 */
@@ -151,8 +193,8 @@ public class PassingCalculator {
 		List<List<PaperPassingStudent>> vertical = getVertical(horizontal.stream().flatMap(Collection::stream)
 				.map(PaperPassingStudent::getBacking).collect(Collectors.toCollection(HashSet::new)), data);
 
-		splittedList.addAll(vertical);
-		splittedList.addAll(horizontal);
+		splitList.addAll(vertical);
+		splitList.addAll(horizontal);
 	}
 
 	/**
