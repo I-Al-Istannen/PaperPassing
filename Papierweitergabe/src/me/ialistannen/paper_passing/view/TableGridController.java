@@ -31,9 +31,11 @@ import me.ialistannen.paper_passing.model.DeskPlaceholder;
 import me.ialistannen.paper_passing.model.StudentsGridEntry;
 import me.ialistannen.paper_passing.model.TableStudent;
 
-import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
@@ -75,7 +77,7 @@ public class TableGridController {
 	}
 
 	/**
-	 * Resizes the components
+	 * Resize the components
 	 *
 	 * @param width  The width
 	 * @param height The height
@@ -125,7 +127,8 @@ public class TableGridController {
 		for (int i = 0; i < amount; i++) {
 			TableColumn<StudentsGridEntry[], Node> column = new TableColumn<>(Integer.toString(i));
 			final int colNumber = i;
-			column.setCellValueFactory(param -> param.getValue()[colNumber] != null ? param.getValue()[colNumber].nodeProperty() : new SimpleObjectProperty<>());
+			column.setCellValueFactory(param -> colNumber < param.getValue().length && param.getValue()[colNumber] != null
+					? param.getValue()[colNumber].nodeProperty() : new SimpleObjectProperty<>());
 			column.setSortable(false);
 
 			tableView.getColumns().add(column);
@@ -133,21 +136,18 @@ public class TableGridController {
 
 		tableView.getSelectionModel().setCellSelectionEnabled(true);
 
+		// crude way of adding key listeners
 		tableView.setOnKeyPressed(event -> {
 			if (event.getCode() == KeyCode.ESCAPE) {
 				tableView.getSelectionModel().clearSelection();
-			} else if (event.getCode() == KeyCode.B && event.isControlDown()) {
+			} else if (event.getCode() == KeyCode.B && event.isAltDown()) {
 				replaceSelectedEntry(new BlackBoardPlaceholder());
-			} else if (event.getCode() == KeyCode.R && event.isControlDown()) {
+			} else if (event.getCode() == KeyCode.R && event.isAltDown()) {
 				replaceSelectedEntry(new BlankPlaceholder());
-			} else if (event.getCode() == KeyCode.D && event.isControlDown()) {
+			} else if (event.getCode() == KeyCode.D && event.isAltDown()) {
 				replaceSelectedEntry(new DeskPlaceholder());
-			} else if (event.getCode() == KeyCode.S && event.isControlDown()) {
-				getTableStudentFromUser().ifPresent(this::replaceSelectedEntry);
 			} else if (event.getCode() == KeyCode.S && event.isAltDown()) {
-				Classroom room = new Classroom();
-				room.setDataList(data);
-				Classroom.save(Paths.get("bin/save2.save"), room);
+				getTableStudentFromUser().ifPresent(this::replaceSelectedEntry);
 			}
 		});
 
@@ -363,5 +363,46 @@ public class TableGridController {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+	}
+
+	/**
+	 * The data converted to a class room. Cut down to the actual action.
+	 */
+	public Classroom getClassRoom() {
+		Classroom room = new Classroom();
+		List<StudentsGridEntry[]> newList = new ArrayList<>(data.size());
+		int maxWidth = 0;
+		for (StudentsGridEntry[] studentsGridEntries : data) {
+			for (int i = 0; i < studentsGridEntries.length; i++) {
+				StudentsGridEntry studentsGridEntry = studentsGridEntries[i];
+				if ((i > maxWidth) && !(studentsGridEntry instanceof BlankPlaceholder)) {
+					maxWidth = i;
+				}
+			}
+		}
+		int maxHeight = 0;
+		for (int i = 0; i < data.size(); i++) {
+			StudentsGridEntry[] studentsGridEntries = data.get(i);
+			boolean isEmpty = true;
+			for (StudentsGridEntry studentsGridEntry : studentsGridEntries) {
+				if (!(studentsGridEntry instanceof BlankPlaceholder)) {
+					isEmpty = false;
+				}
+			}
+			if (!isEmpty) {
+				maxHeight = i;
+			}
+		}
+
+		// maxWidth is currently the index not the size
+		maxWidth += 1;
+
+		List<StudentsGridEntry[]> studentsGridEntries = new ArrayList<>();
+		for (StudentsGridEntry[] gridEntries : data.subList(0, maxHeight)) {
+			studentsGridEntries.add(Arrays.copyOf(gridEntries, maxWidth));
+		}
+
+		room.setDataList(studentsGridEntries);
+		return room;
 	}
 }

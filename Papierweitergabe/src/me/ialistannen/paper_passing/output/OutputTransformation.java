@@ -15,19 +15,29 @@ public enum OutputTransformation {
 	 * Passes the papers one to the right
 	 */
 	RIGHT(data -> {
-		for (PaperPassingStudent student : data) {
-			int targetIndex = data.indexOf(student.getTarget());
-			if (targetIndex == data.size() - 1) {
-				student.setTarget(data.get(0));
-			} else {
-				student.setTarget(data.get(targetIndex + 1));
+		// if the people pass it to themselves, skip it.
+		do {
+			for (PaperPassingStudent student : data) {
+				int targetIndex = data.indexOf(student.getTarget()) + 1;
+				if (targetIndex >= data.size()) {
+					targetIndex = data.size() - targetIndex;
+				}
+
+				student.setTarget(data.get(targetIndex));
 			}
+		} while (data.get(0).equals(data.get(0).getTarget()));
+
+
+		{
+			PaperPassingStudent first = data.get(0);
+			data.remove(first);
+			data.add(first);
 		}
 
 		return data;
 	}),
 	/**
-	 * Passes the papers one to the left
+	 * Passes the papers one to the left. // TODO: Seems to work!
 	 */
 	LEFT(data -> {
 		if (data.isEmpty()) {
@@ -39,12 +49,18 @@ public enum OutputTransformation {
 			for (PaperPassingStudent student : data) {
 				int targetIndex = data.indexOf(student.getTarget()) - 1;
 				if (targetIndex < 0) {
-					targetIndex = data.size() - 1;
+					targetIndex = data.size() + targetIndex;
 				}
 
 				student.setTarget(data.get(targetIndex));
 			}
 		} while (data.get(0).equals(data.get(0).getTarget()));
+
+		{
+			PaperPassingStudent last = data.get(data.size() - 1);
+			data.remove(last);
+			data.add(0, last);
+		}
 
 		// don't oder that list. It destroys the indices
 		return data;

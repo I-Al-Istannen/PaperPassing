@@ -1,9 +1,14 @@
 package me.ialistannen.paper_passing.util;
 
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
+import javafx.stage.FileChooser;
+import me.ialistannen.paper_passing.PaperPassing;
 import me.ialistannen.paper_passing.logic.PaperPassingStudent;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Some static utility methods
@@ -58,5 +63,34 @@ public class Util {
 		}
 
 		return builder.toString();
+	}
+
+	/**
+	 * Shows a confirmation dialog blocking the entire application
+	 *
+	 * @param header The header text
+	 * @param title  The title
+	 *
+	 * @return True if the user accepted.
+	 */
+	public static boolean showConfirmationDialog(String header, String title) {
+		Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+		alert.setTitle(title);
+		alert.setHeaderText(header);
+		alert.initOwner(PaperPassing.getInstance().getPrimaryStage());
+		Optional<ButtonType> buttonType = alert.showAndWait();
+		return buttonType.isPresent() && buttonType.get() == ButtonType.OK;
+	}
+
+	/**
+	 * The default file chooser with the default file extension
+	 *
+	 * @return The {@link FileChooser}
+	 */
+	public static FileChooser getDefaultFileChooser() {
+		FileChooser fileChooser = new FileChooser();
+		fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Paper passer save files", "*.PP_SAVE"));
+		fileChooser.setSelectedExtensionFilter(fileChooser.getExtensionFilters().get(0));
+		return fileChooser;
 	}
 }

@@ -7,7 +7,7 @@ import me.ialistannen.paper_passing.model.TableStudent;
  * A student passing a paper
  */
 @SuppressWarnings("WeakerAccess")
-public class PaperPassingStudent implements Cloneable {
+public class PaperPassingStudent {
 
 	private int paperAmount = 1;
 	private TableStudent backing;
@@ -113,19 +113,5 @@ public class PaperPassingStudent implements Cloneable {
 			return false;
 		}
 		return true;
-	}
-
-	@Override
-	public Object clone() {
-		PaperPassingStudent copy = new PaperPassingStudent(getBacking(), getLocation());
-		{
-			PaperPassingStudent newTarget = new PaperPassingStudent(getTarget().getBacking(), getTarget().getLocation());
-			newTarget.setPaperAmount(getTarget().getPaperAmount());
-			newTarget.setTarget(getTarget().getTarget());
-
-			copy.setTarget(newTarget);
-		}
-		copy.setPaperAmount(getPaperAmount());
-		return copy;
 	}
 }

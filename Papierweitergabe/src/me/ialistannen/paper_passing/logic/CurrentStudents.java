@@ -1,7 +1,11 @@
 package me.ialistannen.paper_passing.logic;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Saves the students, which are edited currently
@@ -9,7 +13,9 @@ import java.util.List;
 public class CurrentStudents {
 	private static CurrentStudents ourInstance = new CurrentStudents();
 
-	private List<PaperPassingStudent> original, modified;
+	private List<PaperPassingStudent> modified;
+	private Map<String, PaperPassingStudent> originalStudents;
+	private Map<String, String> originalState;
 
 	/**
 	 * NO instantiation :P
@@ -19,55 +25,74 @@ public class CurrentStudents {
 	}
 
 	/**
-	 * The original students
+	 * Sets the current students
+	 * <br>A snapshot will be taken and used to allow restoring of the <b>target</b>.
 	 *
-	 * @return A list with the original students in the original order. A copy.
+	 * @param students The students to use
 	 */
-	public List<PaperPassingStudent> getOriginal() {
-		return getListClone(original);
-	}
-
-	/**
-	 * Makes a deep clone of the list
-	 *
-	 * @param input The input list
-	 *
-	 * @return The cloned list
-	 */
-	private List<PaperPassingStudent> getListClone(List<PaperPassingStudent> input) {
-		List<PaperPassingStudent> copy = new ArrayList<>();
-		for (PaperPassingStudent student : input) {
-			copy.add((PaperPassingStudent) student.clone());
+	public void setOriginalStudents(List<PaperPassingStudent> students) {
+		this.originalStudents = new LinkedHashMap<>();
+		for (PaperPassingStudent student : students) {
+			originalStudents.put(student.getBacking().getName(), student);
 		}
 
-		return copy;
+		this.modified = new ArrayList<>(students);
+
+		snapshot();
 	}
 
 	/**
-	 * The modified students
 	 *
-	 * @return A list with the modified students. A copy.
+	 * @return The original students.
+	 */
+	public List<PaperPassingStudent> getOriginalStudents() {
+		return new ArrayList<>(originalStudents.values().stream().collect(Collectors.toList()));
+	}
+
+	/**
+	 * Sets the modified students. No snapshot will be taken
+	 *
+	 * @param students The modified students
+	 */
+	public void setModifiedStudents(List<PaperPassingStudent> students) {
+		modified = new ArrayList<>(students);
+	}
+
+	/**
+	 *
+	 * @return The modified students.
 	 */
 	public List<PaperPassingStudent> getModified() {
-		return getListClone(modified);
+		return new ArrayList<>(modified);
 	}
 
-	/**
-	 * The list <b>must not be reordered!</b>
-	 * <br>Otherwise the next sorting will not work.
-	 * <br>Rule of thumb: Let the transformation handle this and change nothing of the ordering!
-	 *
-	 * @param modified The new modified student list
-	 */
-	public void setModified(List<PaperPassingStudent> modified) {
-		this.modified = getListClone(modified);
-	}
 
 	/**
-	 * @param original The new students
+	 * Restores the relations to the last snapshot
 	 */
-	public void setOriginal(List<PaperPassingStudent> original) {
-		this.original = getListClone(original);
+	public void revertToOriginal() {
+		for (PaperPassingStudent student : getOriginalStudents()) {
+			String target = originalState.get(student.getBacking().getName());
+			if (target == null) {
+				student.setTarget(null);
+			} else {
+				student.setTarget(originalStudents.get(target));
+			}
+		}
+	}
+
+	private void snapshot() {
+		originalState = new HashMap<>();
+		for (PaperPassingStudent student : getOriginalStudents()) {
+			String targetName;
+			if (student.getTarget() == null) {
+				targetName = null;
+			} else {
+				targetName = student.getTarget().getBacking().getName();
+			}
+			originalState.put(student.getBacking().getName(), targetName);
+		}
+
 	}
 
 	/**

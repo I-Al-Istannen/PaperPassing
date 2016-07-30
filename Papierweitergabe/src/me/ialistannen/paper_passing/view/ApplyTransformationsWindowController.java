@@ -4,21 +4,23 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.TextFormatter;
+import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import javafx.util.converter.IntegerStringConverter;
 import me.ialistannen.paper_passing.logic.CurrentStudents;
 import me.ialistannen.paper_passing.logic.PaperPassingStudent;
+import me.ialistannen.paper_passing.output.OutputFormatter;
 import me.ialistannen.paper_passing.output.OutputTransformation;
 import me.ialistannen.paper_passing.util.Util;
 
 import java.awt.Toolkit;
 import java.text.NumberFormat;
 import java.text.ParsePosition;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.UnaryOperator;
 
@@ -27,9 +29,10 @@ import java.util.function.UnaryOperator;
  */
 public class ApplyTransformationsWindowController {
 
+	private Stage myStage;
 
 	@FXML
-	private ListView<PaperPassingStudent> studentList;
+	private ListView<String> studentList;
 
 	@FXML
 	private ComboBox<OutputTransformation> transformationPicker;
@@ -37,10 +40,9 @@ public class ApplyTransformationsWindowController {
 	@FXML
 	private Spinner<Integer> amountSpinner;
 
-
 	@FXML
 	private void initialize() {
-		amountSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 100, 1));
+		amountSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100, 0));
 
 		{
 			NumberFormat formatter = NumberFormat.getInstance();
@@ -56,7 +58,7 @@ public class ApplyTransformationsWindowController {
 				return change;
 			};
 			TextFormatter<Integer> customFormatter = new TextFormatter<>(
-					new IntegerStringConverter(), 1, filter);
+					new IntegerStringConverter(), 0, filter);
 
 			amountSpinner.getEditor().setTextFormatter(customFormatter);
 		}
@@ -75,20 +77,7 @@ public class ApplyTransformationsWindowController {
 
 		transformationPicker.getItems().addAll(OutputTransformation.values());
 
-		studentList.setCellFactory(param -> new ListCell<PaperPassingStudent>() {
-			@Override
-			protected void updateItem(PaperPassingStudent item, boolean empty) {
-				super.updateItem(item, empty);
-				if (item == null || empty) {
-					setText(null);
-					setGraphic(null);
-				} else {
-					setText(item.getBacking().getName());
-				}
-			}
-		});
-
-		studentList.getItems().addAll(CurrentStudents.getInstance().getOriginal());
+		setItems(OutputFormatter.formatList(CurrentStudents.getInstance().getOriginalStudents()));
 	}
 
 	@FXML
@@ -98,20 +87,32 @@ public class ApplyTransformationsWindowController {
 
 	@FXML
 	void onCancel(@SuppressWarnings("UnusedParameters") ActionEvent event) {
-		System.out.println("ApplyTransformationsWindowController.onCancel()");
+		myStage.hide();
 	}
 
 
 	@FXML
 	void onClearPreview(@SuppressWarnings("UnusedParameters") ActionEvent event) {
-		studentList.getItems().setAll(CurrentStudents.getInstance().getOriginal());
+		amountSpinner.getValueFactory().setValue(0);
+		transformationPicker.getSelectionModel().select(OutputTransformation.RIGHT);
+		// reset to basis
+		updateModifiedStudents();
+		setItems(OutputFormatter.formatList(CurrentStudents.getInstance().getModified()));
+
+		// reset amount picker to prompt text
+		transformationPicker.getSelectionModel().clearSelection();
 	}
 
 	@FXML
 	void onPreviewAbove(@SuppressWarnings("UnusedParameters") ActionEvent event) {
 		if (updateModifiedStudents()) {
-			studentList.getItems().setAll(Util.getOrderedList(CurrentStudents.getInstance().getModified().get(0)));
+			setItems(OutputFormatter.formatList(CurrentStudents.getInstance().getModified()));
 		}
+	}
+
+	private void setItems(List<String> items) {
+		Collections.sort(items);
+		studentList.getItems().setAll(items);
 	}
 
 	/**
@@ -129,12 +130,23 @@ public class ApplyTransformationsWindowController {
 			alert.show();
 			return false;
 		}
-		List<PaperPassingStudent> list = CurrentStudents.getInstance().getOriginal();
+		CurrentStudents.getInstance().revertToOriginal();
+		List<PaperPassingStudent> list = CurrentStudents.getInstance().getOriginalStudents();
+
 		for (int i = 0; i < amount; i++) {
 			list = transformation.applyFunction(list);
 		}
-		CurrentStudents.getInstance().setModified(list);
+		CurrentStudents.getInstance().setModifiedStudents(list);
 
 		return true;
+	}
+
+	/**
+	 * Sets the stage this class uses. Will be hidden on close, so don't pass the primary one ;)
+	 *
+	 * @param myStage The stage this class uses
+	 */
+	public void setMyStage(Stage myStage) {
+		this.myStage = myStage;
 	}
 }
