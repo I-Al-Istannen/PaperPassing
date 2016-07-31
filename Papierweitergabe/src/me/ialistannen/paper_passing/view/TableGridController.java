@@ -448,7 +448,9 @@ public class TableGridController {
 		}
 
 		// maxWidth is currently the index not the size
-		maxWidth += 1;
+		maxWidth++;
+		// same
+		maxHeight++;
 
 		List<StudentsGridEntry[]> studentsGridEntries = new ArrayList<>();
 		for (StudentsGridEntry[] gridEntries : data.subList(0, maxHeight)) {

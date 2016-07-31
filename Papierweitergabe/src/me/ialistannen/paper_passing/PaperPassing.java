@@ -26,6 +26,8 @@ public class PaperPassing extends Application {
 	public void start(Stage primaryStage) throws Exception {
 		this.primaryStage = primaryStage;
 
+		// TODO: Short help at the start, overview over functions
+
 		Classroom room = Classroom.read(PaperPassing.class.getResourceAsStream("/resources/Class10B.PP_SAVE")).get(0);
 
 		FXMLLoader loader = new FXMLLoader(MainWindowController.class.getResource("MainWindow.fxml"));
