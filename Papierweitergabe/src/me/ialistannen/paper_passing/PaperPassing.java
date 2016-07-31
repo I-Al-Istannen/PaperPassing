@@ -26,7 +26,7 @@ public class PaperPassing extends Application {
 	public void start(Stage primaryStage) throws Exception {
 		this.primaryStage = primaryStage;
 
-		Classroom room = Classroom.read(PaperPassing.class.getResourceAsStream("/preset/Class10B.PP_SAVE")).get(0);
+		Classroom room = Classroom.read(PaperPassing.class.getResourceAsStream("/resources/Class10B.PP_SAVE")).get(0);
 
 		FXMLLoader loader = new FXMLLoader(MainWindowController.class.getResource("MainWindow.fxml"));
 		BorderPane pane = loader.load();

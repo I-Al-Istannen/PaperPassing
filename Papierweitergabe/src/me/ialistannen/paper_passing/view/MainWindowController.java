@@ -100,6 +100,23 @@ public class MainWindowController {
 
 	@FXML
 	void onAbout(ActionEvent event) {
+		try {
+			FXMLLoader loader = new FXMLLoader(AboutWindowController.class.getResource("AboutWindow.fxml"));
+			BorderPane borderPane = loader.load();
+			AboutWindowController controller = loader.getController();
+
+			Stage stage = new Stage();
+			stage.setScene(new Scene(borderPane));
+			stage.initModality(Modality.APPLICATION_MODAL);
+			stage.initOwner(PaperPassing.getInstance().getPrimaryStage());
+
+			controller.setMyStage(stage);
+
+			stage.show();
+		} catch (IOException e) {
+			e.printStackTrace();
+			Util.showNonBlockingErrorAlert("Couldn't load the about window", "Error loading FXML", Util.getExceptionStackTrace(e));
+		}
 		System.out.println("MainWindowController.onAbout()");
 	}
 
