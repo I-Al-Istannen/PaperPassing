@@ -63,7 +63,7 @@ public class CurrentStudents {
 	 * @return The modified students.
 	 */
 	public List<PaperPassingStudent> getModified() {
-		return new ArrayList<>(modified);
+		return modified == null ? null : new ArrayList<>(modified);
 	}
 
 

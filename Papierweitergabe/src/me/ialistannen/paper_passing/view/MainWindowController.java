@@ -4,10 +4,15 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import me.ialistannen.paper_passing.PaperPassing;
+import me.ialistannen.paper_passing.logic.CurrentStudents;
+import me.ialistannen.paper_passing.logic.PassingCalculator;
 import me.ialistannen.paper_passing.model.Classroom;
 import me.ialistannen.paper_passing.util.Util;
 
@@ -52,12 +57,6 @@ public class MainWindowController {
 	@FXML
 	void onExit(ActionEvent event) {
 		System.exit(0);
-	}
-
-	@FXML
-	void onExport(ActionEvent event) {
-		Classroom room = PaperPassing.getInstance().getMainWindowController().getTableGrid().getClassRoom();
-		startSaving(room);
 	}
 
 	/**
@@ -153,6 +152,55 @@ public class MainWindowController {
 		startSaving(getTableGrid().getClassRoom());
 	}
 
+	@FXML
+	void onOpenTransformWindow(ActionEvent event) {
+		// set the current students and calculate the passing right
+		PassingCalculator passingCalculator = new PassingCalculator(getTableGrid().getClassRoom());
+		CurrentStudents.getInstance().setOriginalStudents(passingCalculator.getResultingList());
+		try {
+			FXMLLoader loader = new FXMLLoader(ApplyTransformationsWindowController.class.getResource("ApplyTransformationsWindow.fxml"));
+			BorderPane pane = loader.load();
+			ApplyTransformationsWindowController controller = loader.getController();
+
+			Stage stage = new Stage();
+			stage.initOwner(PaperPassing.getInstance().getPrimaryStage());
+			stage.initModality(Modality.APPLICATION_MODAL);
+			stage.setScene(new Scene(pane));
+
+			controller.setMyStage(stage);
+
+			stage.show();
+		} catch (IOException e) {
+			e.printStackTrace();
+			Util.showNonBlockingErrorAlert("An error occurred while opening the transformation window", "An error occurred", Util.getExceptionStackTrace(e));
+		}
+	}
+
+
+	@FXML
+	void onOpenTransformOutput(ActionEvent event) {
+		if (CurrentStudents.getInstance().getModified() == null) {
+			Alert alert = new Alert(Alert.AlertType.ERROR);
+			alert.setHeaderText("No transformation done. Please do this first");
+			alert.setTitle("Not transformed");
+			alert.initOwner(PaperPassing.getInstance().getPrimaryStage());
+			alert.show();
+			return;
+		}
+
+		try {
+			FXMLLoader loader = new FXMLLoader(TransformationOutputWindowController.class.getResource("TransformationOutputWindow.fxml"));
+			BorderPane pane = loader.load();
+			Stage stage = new Stage();
+			stage.setScene(new Scene(pane));
+			stage.initOwner(PaperPassing.getInstance().getPrimaryStage());
+			stage.initModality(Modality.APPLICATION_MODAL);
+			stage.show();
+		} catch (IOException e) {
+			e.printStackTrace();
+			Util.showNonBlockingErrorAlert("Error opening the transformation output window", "Error", Util.getExceptionStackTrace(e));
+		}
+	}
 
 	/**
 	 * @return The table grid controller

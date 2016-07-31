@@ -4,10 +4,12 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.TextFormatter;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import javafx.util.converter.IntegerStringConverter;
@@ -77,22 +79,38 @@ public class ApplyTransformationsWindowController {
 
 		transformationPicker.getItems().addAll(OutputTransformation.values());
 
+		studentList.setCellFactory(param -> new ListCell<String>() {
+			@Override
+			protected void updateItem(String item, boolean empty) {
+				super.updateItem(item, empty);
+				if (item == null || empty) {
+					setText(null);
+					setGraphic(null);
+				} else {
+					setText(item);
+					// make the names nicely align. The Output formatter inserts the spaces
+					// we make them appear correctly
+					setFont(Font.font("Monospaced"));
+				}
+			}
+		});
+
 		setItems(OutputFormatter.formatList(CurrentStudents.getInstance().getOriginalStudents()));
 	}
 
 	@FXML
-	void onAccept(@SuppressWarnings("UnusedParameters") ActionEvent event) {
+	void onAccept(ActionEvent event) {
 		System.out.println("ApplyTransformationsWindowController.onAccept()");
 	}
 
 	@FXML
-	void onCancel(@SuppressWarnings("UnusedParameters") ActionEvent event) {
+	void onCancel(ActionEvent event) {
 		myStage.hide();
 	}
 
 
 	@FXML
-	void onClearPreview(@SuppressWarnings("UnusedParameters") ActionEvent event) {
+	void onClearPreview(ActionEvent event) {
 		amountSpinner.getValueFactory().setValue(0);
 		transformationPicker.getSelectionModel().select(OutputTransformation.RIGHT);
 		// reset to basis
@@ -104,7 +122,7 @@ public class ApplyTransformationsWindowController {
 	}
 
 	@FXML
-	void onPreviewAbove(@SuppressWarnings("UnusedParameters") ActionEvent event) {
+	void onPreviewAbove(ActionEvent event) {
 		if (updateModifiedStudents()) {
 			setItems(OutputFormatter.formatList(CurrentStudents.getInstance().getModified()));
 		}
@@ -146,7 +164,7 @@ public class ApplyTransformationsWindowController {
 	 *
 	 * @param myStage The stage this class uses
 	 */
-	public void setMyStage(Stage myStage) {
+	void setMyStage(Stage myStage) {
 		this.myStage = myStage;
 	}
 }

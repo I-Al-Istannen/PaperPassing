@@ -1,14 +1,20 @@
 package me.ialistannen.paper_passing.util;
 
+import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import me.ialistannen.paper_passing.PaperPassing;
 import me.ialistannen.paper_passing.logic.PaperPassingStudent;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.Semaphore;
 
 /**
  * Some static utility methods
@@ -92,5 +98,61 @@ public class Util {
 		fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Paper passer save files", "*.PP_SAVE"));
 		fileChooser.setSelectedExtensionFilter(fileChooser.getExtensionFilters().get(0));
 		return fileChooser;
+	}
+
+	/**
+	 * Shows a non blocking error dialog with the specified header, title and expandable content
+	 *
+	 * @param header            The header text
+	 * @param title             The title
+	 * @param expandableContent The expandable content
+	 */
+	public static void showNonBlockingErrorAlert(String header, String title, String expandableContent) {
+		Alert alert = new Alert(Alert.AlertType.ERROR);
+		alert.setTitle(title);
+		alert.setHeaderText(header);
+		ScrollPane scrollPane = new ScrollPane(new Text(expandableContent));
+		alert.getDialogPane().setExpandableContent(scrollPane);
+		alert.initOwner(PaperPassing.getInstance().getPrimaryStage());
+		alert.show();
+	}
+
+	/**
+	 * Converts the StackTrace to a String
+	 *
+	 * @param e The exception to get the stacktrace for
+	 *
+	 * @return The Stacktrace as a String
+	 */
+	public static String getExceptionStackTrace(Exception e) {
+		StringWriter stringWriter = new StringWriter();
+		PrintWriter printWriter = new PrintWriter(stringWriter);
+		e.printStackTrace(printWriter);
+		return stringWriter.toString();
+	}
+
+	/**
+	 * Runs a runnable on the fx thread and waits for the completion
+	 *
+	 * @param runnable The runnable to run
+	 */
+	public static void blockingRunOnFxThreadAnd(Runnable runnable) {
+		if (Platform.isFxApplicationThread()) {
+			runnable.run();
+			return;
+		}
+
+		try {
+			Semaphore semaphore = new Semaphore(1);
+			semaphore.acquire();
+			Platform.runLater(() -> {
+				runnable.run();
+				semaphore.release();
+			});
+			semaphore.acquireUninterruptibly();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+			showNonBlockingErrorAlert("Error running blocking FXThread", "Error :/", getExceptionStackTrace(e));
+		}
 	}
 }

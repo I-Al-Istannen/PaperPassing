@@ -28,7 +28,6 @@
                         </MenuItem>
                         <SeparatorMenuItem mnemonicParsing="false"/>
                         <MenuItem mnemonicParsing="false" onAction="#onImport" text="Import"/>
-                        <MenuItem mnemonicParsing="false" onAction="#onExport" text="Export"/>
                         <SeparatorMenuItem mnemonicParsing="false"/>
                         <MenuItem mnemonicParsing="false" onAction="#onExit" text="Exit"/>
                     </items>
@@ -36,6 +35,14 @@
                 <Menu mnemonicParsing="false" text="Edit">
                     <items>
                         <MenuItem mnemonicParsing="false" text="Delete"/>
+                    </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Transform">
+                    <items>
+                        <MenuItem mnemonicParsing="false" onAction="#onOpenTransformWindow"
+                                  text="Open transform window"/>
+                        <MenuItem mnemonicParsing="false" onAction="#onOpenTransformOutput"
+                                  text="Open transform ouput"/>
                     </items>
                 </Menu>
                 <Menu mnemonicParsing="false" text="Help">
