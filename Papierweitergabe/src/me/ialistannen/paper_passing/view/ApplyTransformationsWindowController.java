@@ -13,6 +13,7 @@ import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import javafx.util.converter.IntegerStringConverter;
+import me.ialistannen.paper_passing.PaperPassing;
 import me.ialistannen.paper_passing.logic.CurrentStudents;
 import me.ialistannen.paper_passing.logic.PaperPassingStudent;
 import me.ialistannen.paper_passing.output.OutputFormatter;
@@ -100,7 +101,9 @@ public class ApplyTransformationsWindowController {
 
 	@FXML
 	void onAccept(ActionEvent event) {
-		System.out.println("ApplyTransformationsWindowController.onAccept()");
+		update();
+		myStage.hide();
+		PaperPassing.getInstance().getMainWindowController().openTransformationOutput();
 	}
 
 	@FXML
@@ -108,14 +111,12 @@ public class ApplyTransformationsWindowController {
 		myStage.hide();
 	}
 
-
 	@FXML
 	void onClearPreview(ActionEvent event) {
 		amountSpinner.getValueFactory().setValue(0);
 		transformationPicker.getSelectionModel().select(OutputTransformation.RIGHT);
 		// reset to basis
-		updateModifiedStudents();
-		setItems(OutputFormatter.formatList(CurrentStudents.getInstance().getModified()));
+		update();
 
 		// reset amount picker to prompt text
 		transformationPicker.getSelectionModel().clearSelection();
@@ -123,6 +124,13 @@ public class ApplyTransformationsWindowController {
 
 	@FXML
 	void onPreviewAbove(ActionEvent event) {
+		update();
+	}
+
+	/**
+	 * Updates the list and the modified students
+	 */
+	private void update() {
 		if (updateModifiedStudents()) {
 			setItems(OutputFormatter.formatList(CurrentStudents.getInstance().getModified()));
 		}

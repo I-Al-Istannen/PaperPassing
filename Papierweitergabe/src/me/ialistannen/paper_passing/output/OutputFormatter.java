@@ -34,17 +34,6 @@ public class OutputFormatter {
 	}
 
 	/**
-	 * Writes the list to System.out
-	 *
-	 * @param list The list to write
-	 */
-	public static void output(List<String> list) {
-		for (String string : list) {
-			System.out.println(string);
-		}
-	}
-
-	/**
 	 * @param leftHand        The left side
 	 * @param separator       The separator
 	 * @param rightHand       The right side

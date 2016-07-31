@@ -95,6 +95,9 @@ public class TableGridController {
 		// 8 pixels total border
 		height -= rows * 8;
 
+		// magic numbers!!! *party* Dunno where this comes from, but it works.
+		height -= 7;
+
 		double squareWidth = width / (columns);
 		double squareHeight = height / (rows);
 
@@ -125,7 +128,7 @@ public class TableGridController {
 		}
 
 		for (int i = 0; i < amount; i++) {
-			TableColumn<StudentsGridEntry[], Node> column = new TableColumn<>(Integer.toString(i));
+			TableColumn<StudentsGridEntry[], Node> column = new TableColumn<>(Integer.toString(i + 1));
 			final int colNumber = i;
 			column.setCellValueFactory(param -> colNumber < param.getValue().length && param.getValue()[colNumber] != null
 					? param.getValue()[colNumber].nodeProperty() : new SimpleObjectProperty<>());
@@ -140,13 +143,19 @@ public class TableGridController {
 		tableView.setOnKeyPressed(event -> {
 			if (event.getCode() == KeyCode.ESCAPE) {
 				tableView.getSelectionModel().clearSelection();
-			} else if (event.getCode() == KeyCode.B && event.isAltDown()) {
+			}
+
+			if (event.isAltDown() || event.isConsumed() || event.isMetaDown() || event.isControlDown()) {
+				return;
+			}
+
+			if (event.getCode() == KeyCode.B && event.isShiftDown()) {
 				replaceSelectedEntry(new BlackBoardPlaceholder());
-			} else if (event.getCode() == KeyCode.R && event.isAltDown()) {
+			} else if (event.getCode() == KeyCode.R && event.isShiftDown()) {
 				replaceSelectedEntry(new BlankPlaceholder());
-			} else if (event.getCode() == KeyCode.D && event.isAltDown()) {
+			} else if (event.getCode() == KeyCode.D && event.isShiftDown()) {
 				replaceSelectedEntry(new DeskPlaceholder());
-			} else if (event.getCode() == KeyCode.S && event.isAltDown()) {
+			} else if (event.getCode() == KeyCode.S && event.isShiftDown()) {
 				getTableStudentFromUser().ifPresent(this::replaceSelectedEntry);
 			}
 		});
@@ -329,7 +338,7 @@ public class TableGridController {
 	 */
 	private void refresh() {
 		if (!Platform.isFxApplicationThread()) {
-			runOnFxThreadAndWait(() -> refresh());
+			runOnFxThreadAndWait(this::refresh);
 			return;
 		}
 
@@ -366,11 +375,55 @@ public class TableGridController {
 	}
 
 	/**
-	 * The data converted to a class room. Cut down to the actual action.
+	 * Resizes to the given length. Happily cuts out things, so check the width and height yourself.
+	 * The {@link #pack()} method may suit you better.
+	 *
+	 * @param width  The new amount of columns
+	 * @param height The new amount of rows
 	 */
-	public Classroom getClassRoom() {
+	public void resize(int width, int height) {
+		List<StudentsGridEntry[]> newData = new ArrayList<>();
+		for (StudentsGridEntry[] studentsGridEntries : data.subList(0, Math.min(height, data.size()))) {
+			StudentsGridEntry[] newArray = Arrays.copyOf(studentsGridEntries, width);
+			for (int i = 0; i < newArray.length; i++) {
+				if (newArray[i] == null) {
+					newArray[i] = new BlankPlaceholder();
+				}
+			}
+			newData.add(newArray);
+		}
+
+		if (height > data.size()) {
+			height -= data.size();
+			for (int i = 0; i < height; i++) {
+				StudentsGridEntry[] newArray = new StudentsGridEntry[width];
+				for (int j = 0; j < newArray.length; j++) {
+					if (newArray[j] == null) {
+						newArray[j] = new BlankPlaceholder();
+					}
+				}
+				newData.add(newArray);
+			}
+		}
+
+		setData(newData);
+	}
+
+	/**
+	 * Trims the size, so that everything just fits in.
+	 * Only right and down will be trimmed!
+	 */
+	public void pack() {
+		setData(getPackedClassRoom());
+	}
+
+	/**
+	 * The data converted to a class room. Cut down to the actual action.
+	 *
+	 * @return The packed classroom.
+	 */
+	public Classroom getPackedClassRoom() {
 		Classroom room = new Classroom();
-		List<StudentsGridEntry[]> newList = new ArrayList<>(data.size());
 		int maxWidth = 0;
 		for (StudentsGridEntry[] studentsGridEntries : data) {
 			for (int i = 0; i < studentsGridEntries.length; i++) {
@@ -403,6 +456,17 @@ public class TableGridController {
 		}
 
 		room.setDataList(studentsGridEntries);
+		return room;
+	}
+
+	/**
+	 * The classroom. Not modified in any way
+	 *
+	 * @return The classroom
+	 */
+	public Classroom getClassRoom() {
+		Classroom room = new Classroom();
+		room.setDataList(data);
 		return room;
 	}
 }

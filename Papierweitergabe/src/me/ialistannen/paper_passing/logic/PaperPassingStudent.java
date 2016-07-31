@@ -31,13 +31,6 @@ public class PaperPassingStudent {
 	}
 
 	/**
-	 * @param paperAmount The paper amount of the student
-	 */
-	public void setPaperAmount(int paperAmount) {
-		this.paperAmount = paperAmount;
-	}
-
-	/**
 	 * Reduces the paper amount by one
 	 */
 	public void decrementPaperAmount() {

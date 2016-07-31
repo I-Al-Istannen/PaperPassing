@@ -20,7 +20,7 @@ import java.io.ObjectOutputStream;
 import java.io.ObjectStreamException;
 
 /**
- * A student class, to be displayed in a tableview
+ * A student class, to be displayed in a table view
  */
 public class TableStudent extends StudentsGridEntry {
 
@@ -72,6 +72,7 @@ public class TableStudent extends StudentsGridEntry {
 	/**
 	 * @return The name property
 	 */
+	@SuppressWarnings("unused") // Is wanted this by the convention
 	public StringProperty nameProperty() {
 		return name;
 	}

@@ -2,7 +2,7 @@ package me.ialistannen.paper_passing.logic;
 
 /**
  * An implementation of the "Day-Stout-Warren" algorithm to balance a tree.
- * <br>Heavily borrowed from WikiPedia, but I think I understood the way it works :P
+ * <br>Heavily borrowed from Wikipedia, but I think I understood the way it works :P
  *
  * @param <T> The key of the tree
  * @param <V> The value of the key

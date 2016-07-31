@@ -37,7 +37,7 @@ public enum OutputTransformation {
 		return data;
 	}),
 	/**
-	 * Passes the papers one to the left. // TODO: Seems to work!
+	 * Passes the papers one to the left
 	 */
 	LEFT(data -> {
 		if (data.isEmpty()) {

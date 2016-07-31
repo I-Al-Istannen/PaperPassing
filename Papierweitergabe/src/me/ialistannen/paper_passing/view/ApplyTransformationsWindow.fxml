@@ -27,29 +27,27 @@
                 <RowConstraints minHeight="10.0" percentHeight="20.0" prefHeight="30.0" vgrow="SOMETIMES"/>
                 <RowConstraints minHeight="40.0" prefHeight="40.0" vgrow="NEVER"/>
             </rowConstraints>
-            <children>
-                <ListView fx:id="studentList" prefHeight="200.0" prefWidth="600.0" GridPane.columnSpan="2147483647"/>
-                <ComboBox fx:id="transformationPicker" promptText="Pick a transformation" GridPane.columnSpan="2"
-                          GridPane.halignment="CENTER" GridPane.rowIndex="1"/>
-                <Spinner fx:id="amountSpinner" editable="true" GridPane.columnIndex="1" GridPane.columnSpan="2"
-                         GridPane.halignment="CENTER" GridPane.rowIndex="1"/>
-                <ButtonBar prefHeight="40.0" prefWidth="200.0" GridPane.columnSpan="2147483647" GridPane.rowIndex="2">
-                    <buttons>
-                        <Button mnemonicParsing="false" onAction="#onPreviewAbove" text="Preview above"/>
-                        <Button mnemonicParsing="false" onAction="#onClearPreview" text="Clear Preview"/>
-                        <Button mnemonicParsing="false" onAction="#onAccept" text="Accept"/>
-                        <Button mnemonicParsing="false" onAction="#onCancel" text="Cancel"/>
-                    </buttons>
-                    <GridPane.margin>
-                        <Insets/>
-                    </GridPane.margin>
-                    <padding>
-                        <Insets bottom="15.0" right="10.0" top="20.0"/>
-                    </padding>
-                </ButtonBar>
-                <Separator id="separator" GridPane.columnSpan="2147483647" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1"
-                           GridPane.valignment="BOTTOM"/>
-            </children>
+            <ListView fx:id="studentList" prefHeight="200.0" prefWidth="600.0" GridPane.columnSpan="2147483647"/>
+            <ComboBox fx:id="transformationPicker" promptText="Pick a transformation" GridPane.columnSpan="2"
+                      GridPane.halignment="CENTER" GridPane.rowIndex="1"/>
+            <Spinner fx:id="amountSpinner" editable="true" GridPane.columnIndex="1" GridPane.columnSpan="2"
+                     GridPane.halignment="CENTER" GridPane.rowIndex="1"/>
+            <ButtonBar prefHeight="40.0" prefWidth="200.0" GridPane.columnSpan="2147483647" GridPane.rowIndex="2">
+                <buttons>
+                    <Button mnemonicParsing="false" onAction="#onPreviewAbove" text="Preview above"/>
+                    <Button mnemonicParsing="false" onAction="#onClearPreview" text="Clear Preview"/>
+                    <Button mnemonicParsing="false" onAction="#onAccept" text="Accept"/>
+                    <Button mnemonicParsing="false" onAction="#onCancel" text="Cancel"/>
+                </buttons>
+                <GridPane.margin>
+                    <Insets/>
+                </GridPane.margin>
+                <padding>
+                    <Insets bottom="15.0" right="10.0" top="20.0"/>
+                </padding>
+            </ButtonBar>
+            <Separator id="separator" GridPane.columnSpan="2147483647" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1"
+                       GridPane.valignment="BOTTOM"/>
         </GridPane>
     </center>
 </BorderPane>

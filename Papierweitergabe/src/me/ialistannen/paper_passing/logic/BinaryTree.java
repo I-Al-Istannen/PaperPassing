@@ -54,7 +54,7 @@ public class BinaryTree <K extends Comparable<K>, V> {
 	}
 
 	/**
-	 * @param left The keft child
+	 * @param left The left child
 	 */
 	void setLeft(BinaryTree<K, V> left) {
 		this.left = left;
@@ -77,7 +77,7 @@ public class BinaryTree <K extends Comparable<K>, V> {
 	/**
 	 * @param key The key to search
 	 *
-	 * @return The binarytree with this value or an empty Optional
+	 * @return The binary tree with this value or an empty Optional
 	 */
 	public Optional<BinaryTree<K, V>> find(K key) {
 		if (this.key.compareTo(key) == 0) {
@@ -171,7 +171,7 @@ public class BinaryTree <K extends Comparable<K>, V> {
 	}
 
 	/**
-	 * @return A preorder string
+	 * @return A pre-order string
 	 */
 	public String toStringPostOrder() {
 		StringBuilder string = new StringBuilder();

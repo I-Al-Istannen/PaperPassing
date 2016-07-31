@@ -80,10 +80,8 @@ public class MainWindowController {
 	 *
 	 * @param room   The room to save
 	 * @param target The path to save to
-	 *
-	 * @return True if the room was saved
 	 */
-	private boolean save(Classroom room, Path target) {
+	private void save(Classroom room, Path target) {
 		Classroom.save(target, room);
 		if (Files.exists(target)) {
 			Alert successful = new Alert(Alert.AlertType.INFORMATION);
@@ -92,14 +90,11 @@ public class MainWindowController {
 			successful.show();
 
 			lastSaveLocation = target;
-			return true;
 		} else {
 			Alert unSuccessful = new Alert(Alert.AlertType.INFORMATION);
 			unSuccessful.setTitle("Not Saved");
 			unSuccessful.setHeaderText("Couldn't save the classroom!");
 			unSuccessful.show();
-
-			return false;
 		}
 	}
 
@@ -176,9 +171,45 @@ public class MainWindowController {
 		}
 	}
 
-
 	@FXML
 	void onOpenTransformOutput(ActionEvent event) {
+		openTransformationOutput();
+	}
+
+	@FXML
+	void onPack(ActionEvent event) {
+		getTableGrid().pack();
+	}
+
+	@FXML
+	void onResize(ActionEvent event) {
+		try {
+			FXMLLoader loader = new FXMLLoader(ResizeDialogController.class.getResource("ResizeDialog.fxml"));
+			BorderPane pane = loader.load();
+			ResizeDialogController controller = loader.getController();
+
+			Stage stage = new Stage();
+			stage.initModality(Modality.APPLICATION_MODAL);
+			stage.initOwner(PaperPassing.getInstance().getPrimaryStage());
+			stage.setScene(new Scene(pane));
+
+			controller.setMyStage(stage);
+
+			stage.showAndWait();
+
+			if (!controller.wasCancelled()) {
+				getTableGrid().resize(controller.getColumns(), controller.getRows());
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+			Util.showNonBlockingErrorAlert("Can't load the resize dialog", "Error", Util.getExceptionStackTrace(e));
+		}
+	}
+
+	/**
+	 * Opens the transformation output window. Must be called from the Fx Thread
+	 */
+	void openTransformationOutput() {
 		if (CurrentStudents.getInstance().getModified() == null) {
 			Alert alert = new Alert(Alert.AlertType.ERROR);
 			alert.setHeaderText("No transformation done. Please do this first");

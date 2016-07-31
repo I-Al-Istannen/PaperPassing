@@ -1,6 +1,9 @@
 package me.ialistannen.paper_passing.model;
 
+import me.ialistannen.paper_passing.util.Util;
+
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
@@ -9,6 +12,7 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -107,9 +111,28 @@ public class Classroom implements Serializable {
 			throw new IllegalArgumentException("The file does not exist or is a directory: '" + path.toAbsolutePath() + "'.");
 		}
 
+		try (InputStream inputStream = Files.newInputStream(path, StandardOpenOption.READ)) {
+
+			return read(inputStream);
+		} catch (IOException e) {
+			e.printStackTrace();
+			Util.showNonBlockingErrorAlert("Error reading a file", "Error", Util.getExceptionStackTrace(e));
+		}
+
+		return Collections.emptyList();
+	}
+
+	/**
+	 * Reads a (or more) classroom(s) from an input stream
+	 *
+	 * @param inputStream The inputStream to read from
+	 *
+	 * @return All the read classrooms
+	 */
+	public static List<Classroom> read(InputStream inputStream) {
 		ArrayList<Classroom> rooms = new ArrayList<>();
 
-		try (ObjectInputStream objectIn = new ObjectInputStream(Files.newInputStream(path, StandardOpenOption.READ))) {
+		try (ObjectInputStream objectIn = new ObjectInputStream(inputStream)) {
 
 			int amount = objectIn.readInt();
 			rooms.ensureCapacity(amount);
@@ -119,7 +142,9 @@ public class Classroom implements Serializable {
 				if (read instanceof Classroom) {
 					rooms.add((Classroom) read);
 				} else {
-					System.out.println("Unknown object found: '" + read + "' In file '" + path.toAbsolutePath() + "'.");
+					System.out.println("Unknown object found: '" + read
+							+ "' While reading from an stream of type '"
+							+ inputStream.getClass().getSimpleName() + "'.");
 				}
 			}
 

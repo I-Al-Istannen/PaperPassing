@@ -42,7 +42,6 @@ public class CurrentStudents {
 	}
 
 	/**
-	 *
 	 * @return The original students.
 	 */
 	public List<PaperPassingStudent> getOriginalStudents() {
@@ -59,7 +58,6 @@ public class CurrentStudents {
 	}
 
 	/**
-	 *
 	 * @return The modified students.
 	 */
 	public List<PaperPassingStudent> getModified() {

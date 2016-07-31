@@ -34,7 +34,8 @@
                 </Menu>
                 <Menu mnemonicParsing="false" text="Edit">
                     <items>
-                        <MenuItem mnemonicParsing="false" text="Delete"/>
+                        <MenuItem mnemonicParsing="false" onAction="#onResize" text="Resize"/>
+                        <MenuItem mnemonicParsing="false" onAction="#onPack" text="Pack"/>
                     </items>
                 </Menu>
                 <Menu mnemonicParsing="false" text="Transform">
@@ -42,7 +43,7 @@
                         <MenuItem mnemonicParsing="false" onAction="#onOpenTransformWindow"
                                   text="Open transform window"/>
                         <MenuItem mnemonicParsing="false" onAction="#onOpenTransformOutput"
-                                  text="Open transform ouput"/>
+                                  text="Open transform output"/>
                     </items>
                 </Menu>
                 <Menu mnemonicParsing="false" text="Help">

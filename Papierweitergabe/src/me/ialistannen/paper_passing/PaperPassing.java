@@ -8,9 +8,6 @@ import javafx.stage.Stage;
 import me.ialistannen.paper_passing.model.Classroom;
 import me.ialistannen.paper_passing.view.MainWindowController;
 
-import java.nio.file.Files;
-import java.nio.file.Paths;
-
 /**
  * The main class
  */
@@ -29,10 +26,7 @@ public class PaperPassing extends Application {
 	public void start(Stage primaryStage) throws Exception {
 		this.primaryStage = primaryStage;
 
-		Classroom room = null;
-		if (Files.exists(Paths.get("bin/save2.save"))) {
-			room = Classroom.read(Paths.get("bin/save2.save")).get(0);
-		}
+		Classroom room = Classroom.read(PaperPassing.class.getResourceAsStream("/preset/Class10B.PP_SAVE")).get(0);
 
 		FXMLLoader loader = new FXMLLoader(MainWindowController.class.getResource("MainWindow.fxml"));
 		BorderPane pane = loader.load();
