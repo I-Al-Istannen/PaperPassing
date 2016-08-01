@@ -31,7 +31,7 @@ public class TableStudent extends StudentsGridEntry {
 	/**
 	 * @param name The name of the student
 	 */
-	public TableStudent(StringProperty name) {
+	private TableStudent(StringProperty name) {
 		this.name = name;
 
 		updateNode();
@@ -54,14 +54,14 @@ public class TableStudent extends StudentsGridEntry {
 	/**
 	 * @param name The new name
 	 */
-	public void setName(String name) {
+	private void setName(String name) {
 		setName(new SimpleStringProperty(name));
 	}
 
 	/**
 	 * @param name The new name
 	 */
-	public void setName(StringProperty name) {
+	private void setName(StringProperty name) {
 		if (name.get().trim().isEmpty()) {
 			throw new IllegalArgumentException("Name can not be empty!");
 		}

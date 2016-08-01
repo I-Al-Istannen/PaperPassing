@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
  * Saves the students, which are edited currently
  */
 public class CurrentStudents {
-	private static CurrentStudents ourInstance = new CurrentStudents();
+	private static final CurrentStudents ourInstance = new CurrentStudents();
 
 	private List<PaperPassingStudent> modified;
 	private Map<String, PaperPassingStudent> originalStudents;

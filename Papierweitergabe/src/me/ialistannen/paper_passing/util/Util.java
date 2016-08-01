@@ -79,6 +79,7 @@ public class Util {
 	 *
 	 * @return True if the user accepted.
 	 */
+	@SuppressWarnings("SameParameterValue")
 	public static boolean showConfirmationDialog(String header, String title) {
 		Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
 		alert.setTitle(title);

@@ -34,7 +34,6 @@ import me.ialistannen.paper_passing.model.TableStudent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.Semaphore;
@@ -45,13 +44,14 @@ import java.util.concurrent.TimeUnit;
  */
 public class TableGridController {
 
+	@SuppressWarnings("CanBeFinal")
 	@FXML
 	private TableView<StudentsGridEntry[]> tableView;
 
 	@FXML
 	private AnchorPane anchorPane;
 
-	private ObservableList<StudentsGridEntry[]> data = FXCollections.observableArrayList();
+	private final ObservableList<StudentsGridEntry[]> data = FXCollections.observableArrayList();
 
 	@FXML
 	@SuppressWarnings("unused")
@@ -244,7 +244,7 @@ public class TableGridController {
 	/**
 	 * @param newData The new Data. No null values are permitted
 	 */
-	public void setData(Collection<StudentsGridEntry[]> newData) {
+	private void setData(Collection<StudentsGridEntry[]> newData) {
 		if (!Platform.isFxApplicationThread()) {
 			runOnFxThreadAndWait(() -> setData(newData));
 			return;
@@ -274,62 +274,16 @@ public class TableGridController {
 	/**
 	 * Clears the table
 	 */
-	public void clear() {
-		setData(Collections.emptyList());
-	}
-
-	/**
-	 * @param x The x coordinate of the entry
-	 * @param y The y coordinate of the entry
-	 *
-	 * @return The entry if found
-	 *
-	 * @throws IllegalArgumentException if x or y is is negative or too big
-	 */
-	public Optional<StudentsGridEntry> getEntry(int x, int y) {
-		if (y < 0 || y >= data.size()) {
-			throw new IllegalArgumentException("y can't be negative or bigger than the table size (" + data.size() + "). X: " + x);
-		}
-
-		if (x < 0 || x >= data.get(y).length) {
-			throw new IllegalArgumentException("x can't be negative or bigger than the amount of entries (" + data.get(x).length + ") Y: " + y);
-		}
-
-		return Optional.ofNullable(data.get(y)[x]);
-	}
-
-	/**
-	 * @param x     The x coordinate of the entry
-	 * @param y     The y coordinate of the entry
-	 * @param entry The new entry
-	 */
-	public void setEntry(int x, int y, StudentsGridEntry entry) {
-		if (!Platform.isFxApplicationThread()) {
-			runOnFxThreadAndWait(() -> setEntry(x, y, entry));
-			return;
-		}
-		// must have SOME data (the column count)
-		if (data.isEmpty()) {
-			return;
-		}
-
-		if (x < 0 || x >= data.get(0).length) {
-			throw new IllegalArgumentException("x can't be negative or bigger than the column count (" + data.get(0).length + ") X='" + x + "'");
-		}
-
-		if (y < 0) {
-			throw new IllegalArgumentException("y can't be negative. Y='" + y + "'");
-		}
-
-		if (data.size() <= y) {
-			data.add(y, new StudentsGridEntry[data.get(0).length]);
-			for (int i = 0; i < data.get(0).length; i++) {
-				data.get(y)[i] = new BlankPlaceholder();
+	void clear() {
+		for (StudentsGridEntry[] studentsGridEntries : data) {
+			for (int i = 0; i < studentsGridEntries.length; i++) {
+				if (!(studentsGridEntries[i] instanceof BlankPlaceholder)) {
+					studentsGridEntries[i] = new BlankPlaceholder();
+				}
 			}
 		}
 
-		data.get(y)[x] = entry;
-
+		// no property has changed ==> Change not reflected ==> Do it yourself
 		refresh();
 	}
 
@@ -381,7 +335,7 @@ public class TableGridController {
 	 * @param width  The new amount of columns
 	 * @param height The new amount of rows
 	 */
-	public void resize(int width, int height) {
+	void resize(int width, int height) {
 		List<StudentsGridEntry[]> newData = new ArrayList<>();
 		for (StudentsGridEntry[] studentsGridEntries : data.subList(0, Math.min(height, data.size()))) {
 			StudentsGridEntry[] newArray = Arrays.copyOf(studentsGridEntries, width);
@@ -413,7 +367,7 @@ public class TableGridController {
 	 * Trims the size, so that everything just fits in.
 	 * Only right and down will be trimmed!
 	 */
-	public void pack() {
+	void pack() {
 		setData(getPackedClassRoom());
 	}
 
@@ -422,7 +376,7 @@ public class TableGridController {
 	 *
 	 * @return The packed classroom.
 	 */
-	public Classroom getPackedClassRoom() {
+	private Classroom getPackedClassRoom() {
 		Classroom room = new Classroom();
 		int maxWidth = 0;
 		for (StudentsGridEntry[] studentsGridEntries : data) {
@@ -466,7 +420,7 @@ public class TableGridController {
 	 *
 	 * @return The classroom
 	 */
-	public Classroom getClassRoom() {
+	Classroom getClassRoom() {
 		Classroom room = new Classroom();
 		room.setDataList(data);
 		return room;

@@ -13,6 +13,7 @@ import me.ialistannen.paper_passing.view.MainWindowController;
  */
 public class PaperPassing extends Application {
 
+	@SuppressWarnings("CanBeFinal")
 	private static PaperPassing instance;
 
 	private Stage primaryStage;

@@ -33,13 +33,6 @@ public class Classroom implements Serializable {
 	}
 
 	/**
-	 * @param data The data to use
-	 */
-	public Classroom(StudentsGridEntry[][] data) {
-		setData(data);
-	}
-
-	/**
 	 * @return The data about the classroom
 	 */
 	public StudentsGridEntry[][] getData() {
@@ -53,12 +46,6 @@ public class Classroom implements Serializable {
 		return Arrays.asList(data);
 	}
 
-	/**
-	 * @param newData The new data
-	 */
-	public void setData(StudentsGridEntry[][] newData) {
-		data = newData;
-	}
 
 	/**
 	 * @param newData The new data

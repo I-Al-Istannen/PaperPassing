@@ -51,11 +51,11 @@ public class OutputFormatter {
 	}
 
 	/**
-	 * @param string The String to repeat
 	 * @param amount The amount to repeat it for
 	 *
 	 * @return The repeated string
 	 */
+	@SuppressWarnings("SameParameterValue")
 	private static String repeat(String string, int amount) {
 		StringBuilder builder = new StringBuilder();
 		for (int i = 0; i < amount; i++) {

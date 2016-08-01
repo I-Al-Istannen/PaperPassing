@@ -30,16 +30,20 @@ import java.util.function.UnaryOperator;
 /**
  * The controller for the ApplyTransformationWindow
  */
+@SuppressWarnings("WeakerAccess")  // For the fxml public is nicer
 public class ApplyTransformationsWindowController {
 
 	private Stage myStage;
 
+	@SuppressWarnings("CanBeFinal")
 	@FXML
 	private ListView<String> studentList;
 
+	@SuppressWarnings("CanBeFinal")
 	@FXML
 	private ComboBox<OutputTransformation> transformationPicker;
 
+	@SuppressWarnings("CanBeFinal")
 	@FXML
 	private Spinner<Integer> amountSpinner;
 

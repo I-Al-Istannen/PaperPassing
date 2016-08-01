@@ -10,9 +10,9 @@ import me.ialistannen.paper_passing.model.TableStudent;
 public class PaperPassingStudent {
 
 	private int paperAmount = 1;
-	private TableStudent backing;
+	private final TableStudent backing;
 	private PaperPassingStudent target;
-	private Point2D location;
+	private final Point2D location;
 
 	/**
 	 * @param backing  The {@link TableStudent} backing this

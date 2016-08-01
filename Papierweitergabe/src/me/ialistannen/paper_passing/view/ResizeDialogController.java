@@ -8,6 +8,7 @@ import javafx.stage.Stage;
 /**
  * Let's the user resize the grid
  */
+@SuppressWarnings("WeakerAccess")  // For the fxml public is nicer
 public class ResizeDialogController {
 
 	private Stage myStage;
@@ -16,9 +17,11 @@ public class ResizeDialogController {
 
 	private boolean cancelled = false;
 
+	@SuppressWarnings("CanBeFinal")
 	@FXML
 	private Slider columnSlider;
 
+	@SuppressWarnings("CanBeFinal")
 	@FXML
 	private Slider rowSlider;
 
@@ -68,8 +71,6 @@ public class ResizeDialogController {
 	 */
 	public void setMyStage(Stage myStage) {
 		this.myStage = myStage;
-		this.myStage.setOnCloseRequest(event -> {
-			cancelled = true;
-		});
+		this.myStage.setOnCloseRequest(event -> cancelled = true);
 	}
 }

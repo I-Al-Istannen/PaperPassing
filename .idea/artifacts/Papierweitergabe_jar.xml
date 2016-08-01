@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="Papierweitergabe:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/Papierweitergabe_jar</output-path>
+    <root id="archive" name="Papierweitergabe.jar">
+      <element id="module-output" name="Papierweitergabe" />
+    </root>
+  </artifact>
+</component>

@@ -13,6 +13,7 @@ import me.ialistannen.paper_passing.PaperPassing;
 /**
  * The about window
  */
+@SuppressWarnings("WeakerAccess")  // For the fxml public is nicer
 public class AboutWindowController {
 
 	private Stage myStage;
@@ -20,12 +21,15 @@ public class AboutWindowController {
 	@FXML
 	private BorderPane borderPane;
 
+	@SuppressWarnings("CanBeFinal")
 	@FXML
 	private TextFlow textFlow;
 
+	@SuppressWarnings("CanBeFinal")
 	@FXML
 	private TextFlow pictureDescriptionFlow;
 
+	@SuppressWarnings("CanBeFinal")
 	@FXML
 	private Label headerLabel;
 
@@ -94,7 +98,7 @@ public class AboutWindowController {
 	}
 
 	/**
-	 * @param myStage
+	 * @param myStage The stage this dialog uses
 	 */
 	public void setMyStage(Stage myStage) {
 		this.myStage = myStage;

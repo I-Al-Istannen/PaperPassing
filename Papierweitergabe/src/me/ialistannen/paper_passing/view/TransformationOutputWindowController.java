@@ -34,11 +34,13 @@ import java.util.stream.Collectors;
 /**
  * A controller for the output window
  */
+@SuppressWarnings("WeakerAccess") // For the fxml public is nicer
 public class TransformationOutputWindowController {
 
 	@FXML
 	private BorderPane borderPane;
 
+	@SuppressWarnings("CanBeFinal")
 	@FXML
 	private TextArea centerTextArea;
 

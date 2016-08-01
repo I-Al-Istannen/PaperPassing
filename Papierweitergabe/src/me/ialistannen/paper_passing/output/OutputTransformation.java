@@ -66,7 +66,7 @@ public enum OutputTransformation {
 		return data;
 	});
 
-	private Function<List<PaperPassingStudent>, List<PaperPassingStudent>> function;
+	private final Function<List<PaperPassingStudent>, List<PaperPassingStudent>> function;
 
 	/**
 	 * @param function The function to use

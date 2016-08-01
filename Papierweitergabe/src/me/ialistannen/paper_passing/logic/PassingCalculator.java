@@ -20,11 +20,11 @@ import java.util.stream.Collectors;
  */
 public class PassingCalculator {
 
-	private Classroom room;
+	private final Classroom room;
 
-	private List<List<PaperPassingStudent>> splitList = new ArrayList<>();
+	private final List<List<PaperPassingStudent>> splitList = new ArrayList<>();
 
-	private List<PaperPassingStudent> resultingList;
+	private final List<PaperPassingStudent> resultingList;
 
 	/**
 	 * @param room The room to use

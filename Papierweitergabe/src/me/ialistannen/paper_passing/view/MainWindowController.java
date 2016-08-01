@@ -27,6 +27,7 @@ import java.util.List;
  */
 public class MainWindowController {
 
+	@SuppressWarnings("CanBeFinal")
 	@FXML
 	private BorderPane borderPane;
 
@@ -117,7 +118,6 @@ public class MainWindowController {
 			e.printStackTrace();
 			Util.showNonBlockingErrorAlert("Couldn't load the about window", "Error loading FXML", Util.getExceptionStackTrace(e));
 		}
-		System.out.println("MainWindowController.onAbout()");
 	}
 
 	@FXML
@@ -221,6 +221,11 @@ public class MainWindowController {
 			e.printStackTrace();
 			Util.showNonBlockingErrorAlert("Can't load the resize dialog", "Error", Util.getExceptionStackTrace(e));
 		}
+	}
+
+	@FXML
+	void onClear(ActionEvent event) {
+		getTableGrid().clear();
 	}
 
 	/**

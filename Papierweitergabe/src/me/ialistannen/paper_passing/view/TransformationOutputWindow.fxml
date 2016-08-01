@@ -11,20 +11,14 @@
             fx:controller="me.ialistannen.paper_passing.view.TransformationOutputWindowController">
     <top>
         <MenuBar BorderPane.alignment="CENTER">
-            <menus>
-                <Menu mnemonicParsing="false" text="File">
-                    <items>
-                        <MenuItem mnemonicParsing="false" onAction="#onExport" text="Export"/>
-                        <MenuItem mnemonicParsing="false" onAction="#onPrint" text="Print"/>
-                    </items>
-                </Menu>
-                <Menu mnemonicParsing="false" text="Output Type">
-                    <items>
-                        <MenuItem mnemonicParsing="false" onAction="#onOutputTypeList" text="List"/>
-                        <MenuItem mnemonicParsing="false" onAction="#onOutputTypeConnectedList" text="Connected List"/>
-                    </items>
-                </Menu>
-            </menus>
+            <Menu mnemonicParsing="false" text="File">
+                <MenuItem mnemonicParsing="false" onAction="#onExport" text="Export"/>
+                <MenuItem mnemonicParsing="false" onAction="#onPrint" text="Print"/>
+            </Menu>
+            <Menu mnemonicParsing="false" text="Output Type">
+                <MenuItem mnemonicParsing="false" onAction="#onOutputTypeList" text="List"/>
+                <MenuItem mnemonicParsing="false" onAction="#onOutputTypeConnectedList" text="Connected List"/>
+            </Menu>
         </MenuBar>
     </top>
     <center>
