@@ -24,9 +24,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -96,46 +94,16 @@ public class TransformationOutputWindowController {
 
 	@FXML
 	void onOutputTypeConnectedList(ActionEvent event) {
-		List<List<PaperPassingStudent>> circles = new ArrayList<>();
-		List<PaperPassingStudent> copyOfAll = CurrentStudents.getInstance().getModified();
-
-		for (PaperPassingStudent student : CurrentStudents.getInstance().getModified()) {
-			if (!copyOfAll.contains(student)) {
-				continue;
-			}
-			List<PaperPassingStudent> orderedList = Util.getOrderedList(student);
-			copyOfAll.removeAll(orderedList);
-			circles.add(orderedList);
-		}
-		List<PaperPassingStudent> collect = circles
-				.stream()
-				.sequential()
-				.flatMap(Collection::stream)
-				.collect(Collectors.toList());
-
-		String newText;
-		{
-			StringBuilder builder = new StringBuilder();
-
-			List<PaperPassingStudent> copy = new ArrayList<>(collect);
-			for (PaperPassingStudent student : collect) {
-				if (!copy.contains(student)) {
-					continue;
-				}
-				copy.remove(student);
-				copy.remove(student.getTarget());
-				builder
-						.append(" -> ")
-						.append(student.getBacking().getName())
-						.append(" -> ")
-						.append(student.getTarget().getBacking().getName());
-			}
-
-			newText = builder.toString();
-			newText = newText.replaceFirst(" -> ", "");
-		}
-
-		setText(Collections.singletonList(newText));
+		String text =
+				OutputFormatter.formatList(
+						Util.getOrderedList(CurrentStudents.getInstance().getModified().get(0))
+				).stream()
+						.collect(Collectors.joining("§§"));
+		// remove duplicates
+		// otherwise it would look like this:
+		// 5 -> 6§§6 -> 7§§7 -> 0§§0 -> 1§§1 -> 2§§2 -> 3§§3 -> 4§§4 -> 5
+		text = text.replaceAll("§§.+?(?=->)", " ");
+		setText(Collections.singletonList(text));
 	}
 
 	@FXML

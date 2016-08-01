@@ -38,6 +38,7 @@
                 <MenuItem mnemonicParsing="false" onAction="#onOpenTransformOutput" text="Open transform output"/>
             </Menu>
             <Menu mnemonicParsing="false" text="Help">
+                <MenuItem mnemonicParsing="false" onAction="#onStartWindow" text="Start Window"/>
                 <MenuItem mnemonicParsing="false" onAction="#onAbout" text="About"/>
             </Menu>
         </MenuBar>

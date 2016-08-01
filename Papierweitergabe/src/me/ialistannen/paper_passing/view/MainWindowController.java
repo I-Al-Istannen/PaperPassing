@@ -228,6 +228,27 @@ public class MainWindowController {
 		getTableGrid().clear();
 	}
 
+	@FXML
+	void onStartWindow(ActionEvent event) {
+		try {
+			FXMLLoader loader = new FXMLLoader(ResizeDialogController.class.getResource("StartWindow.fxml"));
+			BorderPane pane = loader.load();
+			StartWindowController controller = loader.getController();
+
+			Stage stage = new Stage();
+			stage.initModality(Modality.APPLICATION_MODAL);
+			stage.initOwner(PaperPassing.getInstance().getPrimaryStage());
+			stage.setScene(new Scene(pane));
+
+			controller.setMyStage(stage);
+
+			stage.show();
+		} catch (IOException e) {
+			e.printStackTrace();
+			Util.showNonBlockingErrorAlert("Can't load the start window", "Error", Util.getExceptionStackTrace(e));
+		}
+	}
+
 	/**
 	 * Opens the transformation output window. Must be called from the Fx Thread
 	 */

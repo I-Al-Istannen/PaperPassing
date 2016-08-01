@@ -15,6 +15,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static me.ialistannen.paper_passing.util.Util.getOrderedList;
+
 /**
  * Calculates where the next paper should be passed to
  */
@@ -70,8 +72,28 @@ public class PassingCalculator {
 			}
 		}
 
-		Set<PaperPassingStudent> notProcessed = splitList.stream().filter(list -> list.size() == 1)
-				.flatMap(Collection::stream).collect(Collectors.toSet());
+		// TODO: Doesn't work with this:
+		/*
+		* Student | | Student | | Student
+		* Where "| |" is an empty space
+		*/
+
+		List<PaperPassingStudent> notProcessed = getSingles(room.getData());
+
+		splitList.add(new ArrayList<>(notProcessed));
+
+		for (int i = 0; i < notProcessed.size(); i++) {
+			PaperPassingStudent student = notProcessed.get(i);
+			student.decrementPaperAmount();
+
+			int targetIndex = i == notProcessed.size() - 1 ? 0 : i + 1;
+			student.setTarget(notProcessed.get(targetIndex));
+
+			notProcessed.get(targetIndex).incrementPaperAmount();
+		}
+
+		easyList.add(new ArrayList<>(notProcessed));
+		notProcessed.clear();
 
 		easyList.stream().sequential().flatMap(Collection::stream).filter(student -> student.getPaperAmount() < 1)
 				.forEach(tooFew::add);
@@ -111,6 +133,7 @@ public class PassingCalculator {
 		}
 
 		List<List<PaperPassingStudent>> circles = getCircles(splitList.stream().flatMap(Collection::stream).collect(Collectors.toList()));
+
 		// connect them!
 		for (int i = 0; i < circles.size(); i++) {
 			List<PaperPassingStudent> firstList = circles.get(i);
@@ -127,6 +150,9 @@ public class PassingCalculator {
 
 				lastFromFirst.setTarget(firstFromSecond);
 				lastFromSecond.setTarget(firstFromFirst);
+
+				List<PaperPassingStudent> merged = Util.getOrderedList(firstFromFirst);
+				circles.set(i + 1, merged);
 			}
 		}
 
@@ -135,7 +161,7 @@ public class PassingCalculator {
 			return Collections.emptyList();
 		}
 		// create the ordered List. Cosmetics :P
-		return Util.getOrderedList(splitList.get(0).get(0));
+		return getOrderedList(splitList.get(0).get(0));
 	}
 
 	/**
@@ -188,13 +214,47 @@ public class PassingCalculator {
 	private void split() {
 		StudentsGridEntry[][] data = room.getData();
 
-		List<List<PaperPassingStudent>> horizontal = getHorizontal(data).stream()
-				.filter(list -> list.size() > 1).collect(Collectors.toList());
-		List<List<PaperPassingStudent>> vertical = getVertical(horizontal.stream().flatMap(Collection::stream)
-				.map(PaperPassingStudent::getBacking).collect(Collectors.toCollection(HashSet::new)), data);
+		List<List<PaperPassingStudent>> horizontal = getHorizontal(data);
+		List<List<PaperPassingStudent>> vertical = getVertical(
+				horizontal.stream()
+						.flatMap(Collection::stream)
+						.map(PaperPassingStudent::getBacking)
+						.collect(Collectors.toCollection(HashSet::new))
+				, data);
 
 		splitList.addAll(vertical);
 		splitList.addAll(horizontal);
+	}
+
+	/**
+	 * All the single students
+	 *
+	 * @param data The data to use
+	 *
+	 * @return The Singles
+	 */
+	private List<PaperPassingStudent> getSingles(StudentsGridEntry[][] data) {
+		Set<PaperPassingStudent> pairs = splitList.stream().flatMap(Collection::stream).collect(Collectors.toSet());
+		List<PaperPassingStudent> singles = new ArrayList<>();
+		singles.addAll(getAll(data));
+		singles.removeAll(pairs);
+		return singles;
+	}
+
+	private Set<PaperPassingStudent> getAll(StudentsGridEntry[][] data) {
+		Set<PaperPassingStudent> students = new HashSet<>();
+		for (int y = 0; y < data.length; y++) {
+			for (int x = 0; x < data[y].length; x++) {
+				StudentsGridEntry entry = data[y][x];
+
+				if (entry instanceof TableStudent) {
+					PaperPassingStudent student = new PaperPassingStudent((TableStudent) entry, new Point2D(x, y));
+					students.add(student);
+				}
+			}
+		}
+
+		return students;
 	}
 
 	/**
@@ -205,8 +265,8 @@ public class PassingCalculator {
 	private List<List<PaperPassingStudent>> getHorizontal(StudentsGridEntry[][] data) {
 		List<List<PaperPassingStudent>> horizontal = new ArrayList<>();
 
-		List<PaperPassingStudent> tmpList = new ArrayList<>();
 		for (int y = 0; y < data.length; y++) {
+			List<PaperPassingStudent> tmpList = new ArrayList<>();
 			for (int x = 0; x < data[y].length; x++) {
 				StudentsGridEntry entry = data[y][x];
 				if (!(entry instanceof TableStudent)) {
@@ -221,7 +281,6 @@ public class PassingCalculator {
 			}
 			if (tmpList.size() > 1) {
 				horizontal.add(tmpList);
-				tmpList = new ArrayList<>();
 			}
 		}
 
@@ -237,8 +296,8 @@ public class PassingCalculator {
 	private List<List<PaperPassingStudent>> getVertical(Collection<TableStudent> visited, StudentsGridEntry[][] data) {
 		List<List<PaperPassingStudent>> horizontal = new ArrayList<>();
 
-		List<PaperPassingStudent> tmpList = new ArrayList<>();
 		for (int x = 0; x < data[0].length; x++) {
+			List<PaperPassingStudent> tmpList = new ArrayList<>();
 			for (int y = 0; y < data.length; y++) {
 				StudentsGridEntry entry = data[y][x];
 				if (entry instanceof TableStudent && visited.contains(entry)) {
@@ -257,7 +316,6 @@ public class PassingCalculator {
 			}
 			if (tmpList.size() > 1) {
 				horizontal.add(tmpList);
-				tmpList = new ArrayList<>();
 			}
 		}
 

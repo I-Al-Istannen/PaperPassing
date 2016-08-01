@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ButtonBar?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.text.TextFlow?>
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0"
+            prefWidth="610.0" stylesheets="@StartWindowCss.css" xmlns="http://javafx.com/javafx/8.0.60"
+            xmlns:fx="http://javafx.com/fxml/1" fx:controller="me.ialistannen.paper_passing.view.StartWindowController">
+    <center>
+        <ScrollPane fx:id="scrollPane" fitToHeight="true" fitToWidth="true" BorderPane.alignment="CENTER">
+            <BorderPane.margin>
+                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+            </BorderPane.margin>
+            <TextFlow fx:id="textFlow" prefHeight="200.0" prefWidth="200.0">
+                <padding>
+                    <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                </padding>
+            </TextFlow>
+        </ScrollPane>
+    </center>
+    <top>
+        <MenuBar BorderPane.alignment="CENTER">
+            <Menu mnemonicParsing="false" text="Switch topic">
+                <MenuItem mnemonicParsing="false" onAction="#onGrid" text="Grid"/>
+                <MenuItem mnemonicParsing="false" onAction="#onTransformation" text="Transformation"/>
+                <MenuItem mnemonicParsing="false" onAction="#onAlgorithm" text="&quot;Algorithm&quot;"/>
+            </Menu>
+        </MenuBar>
+    </top>
+    <bottom>
+        <ButtonBar prefHeight="40.0" BorderPane.alignment="CENTER">
+            <buttons>
+                <Button mnemonicParsing="false" onAction="#onClose" text="Close"/>
+            </buttons>
+            <BorderPane.margin>
+                <Insets right="10.0"/>
+            </BorderPane.margin>
+        </ButtonBar>
+    </bottom>
+</BorderPane>

@@ -1,0 +1,38 @@
+#header {
+    -fx-font-size: 20px;
+    -fx-text-fill: lime;
+    -fx-font-family: "serif";
+    /* Shadow here for cosmetics, because the green is too ugly. Doesn't fix it though. */
+    -fx-effect: dropshadow( gaussian , black , 10 , 0.7 , 1 , 1 )
+}
+
+.textFlowCustom {
+    -fx-font-size: 15px;
+    -fx-fill: black;
+}
+
+.keycode {
+    -fx-font-size: 12px;
+    -fx-fill: gray;
+    -fx-font-style: italic;
+}
+
+.menu-name {
+    -fx-font-size: 15px;
+    -fx-fill: cornflowerblue;
+}
+
+.transformation-name {
+    -fx-font-size: 15px;
+    -fx-fill: forestgreen;
+}
+
+.enumeration-point {
+    -fx-font-size: 15px;
+    -fx-underline: true;
+}
+
+.quote {
+    -fx-font-size: 15px;
+    -fx-font-style: italic;
+}
