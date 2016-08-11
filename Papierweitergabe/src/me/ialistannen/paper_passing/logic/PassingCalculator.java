@@ -72,7 +72,7 @@ public class PassingCalculator {
 			}
 		}
 
-		// TODO: Doesn't work with this:
+		// Doesn't work with this: SHOULD WORK
 		/*
 		* Student | | Student | | Student
 		* Where "| |" is an empty space
